@@ -1,22 +1,24 @@
 import { useState } from 'react';
-import { Box, Link, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
+import AppLink from '../atoms/AppLink';
 import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import FormField from '../molecules/FormField';
 import ItemListInput from '../molecules/ItemListInput';
 import CheckboxField from '../molecules/CheckboxField';
+import AddressField from '../molecules/AddressField';
 import TextInput from '../atoms/TextInput';
 import SectionTitle from '../atoms/SectionTitle';
 import PrimaryButton from '../atoms/PrimaryButton';
 import { colors } from '../../utils/theme';
 import {
   formatRut, isValidRut, isValidEmail, isValidPhone, normalizePhone,
-  isValidUrl, normalizeUrl,
+  isValidUrl, normalizeUrl, formatNationalPhone,
 } from '../../utils/validators';
 
 const INITIAL = {
   rut: '', businessName: '', businessActivity: '', website: '',
-  storeAddress: '', emails: [], phones: [], acceptedTerms: false,
+  storeAddresses: [], emails: [], phones: [], acceptedTerms: false,
 };
 
 /**
@@ -102,11 +104,11 @@ export default function CompanyRegistrationForm({
         </FormField>
 
         <FormField label="Dirección del local" htmlFor="storeAddress" optional>
-          <TextInput
+          <AddressField
             id="storeAddress"
-            placeholder="Av. República 517, Santiago"
-            autoComplete="street-address"
-            {...text('storeAddress')}
+            addresses={values.storeAddresses}
+            onChange={(v) => setField('storeAddresses', v)}
+            maxItems={1}
           />
         </FormField>
 
@@ -129,11 +131,13 @@ export default function CompanyRegistrationForm({
           label="Teléfonos"
           items={values.phones}
           onChange={(v) => setField('phones', v)}
-          placeholder="+56 9 1234 5678"
+          placeholder="9 1234 5678"
+          prefix="+56"
+          formatDraft={formatNationalPhone}
           icon={<PhoneOutlinedIcon fontSize="small" />}
           validate={isValidPhone}
           normalize={(v) => (v.trim() ? normalizePhone(v) : '')}
-          errorMessage="Usa un celular chileno: +56 9 1234 5678"
+          errorMessage="Ingresa un celular chileno válido: 9 1234 5678"
           markFirstAsPrimary
           error={errors.phones}
           inputProps={{ type: 'tel' }}
@@ -155,9 +159,9 @@ export default function CompanyRegistrationForm({
 
       <Typography align="center" sx={{ mt: 3, fontSize: 14, color: colors.text }}>
         ¿Ya tienes cuenta?{' '}
-        <Link href={loginHref} underline="always" sx={{ color: colors.link, fontFamily: 'inherit' }}>
+        <AppLink href={loginHref} underline="always" sx={{ color: colors.link, fontFamily: 'inherit' }}>
           Inicia sesión
-        </Link>
+        </AppLink>
       </Typography>
     </Box>
   );

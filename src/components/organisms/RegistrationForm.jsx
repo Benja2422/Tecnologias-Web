@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, Stack, Typography, Box } from '@mui/material';
+import { Stack, Typography, Box } from '@mui/material';
+import AppLink from '../atoms/AppLink';
 import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import FormField from '../molecules/FormField';
@@ -13,7 +14,7 @@ import PrimaryButton from '../atoms/PrimaryButton';
 import { colors } from '../../utils/theme';
 import {
   formatRut, isValidRut, formatDate, isValidDate, isAdult,
-  isValidEmail, isValidPhone, normalizePhone, passwordError,
+  isValidEmail, isValidPhone, normalizePhone, formatNationalPhone, passwordError,
 } from '../../utils/validators';
 
 const INITIAL = {
@@ -115,13 +116,15 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
           label="Teléfonos"
           items={values.phones}
           onChange={(v) => setField('phones', v)}
-          placeholder="+56 9 1234 5678"
+          placeholder="9 1234 5678"
+          prefix="+56"
+          formatDraft={formatNationalPhone}
           icon={<PhoneOutlinedIcon fontSize="small" />}
           validate={isValidPhone}
           normalize={(v) => (v.trim() ? normalizePhone(v) : '')}
-          errorMessage="Usa un celular chileno: +56 9 1234 5678"
+          errorMessage="Ingresa un celular chileno válido: 9 1234 5678"
           error={errors.phones}
-          inputProps={{ type: 'tel', autoComplete: 'tel' }}
+          inputProps={{ type: 'tel', autoComplete: 'tel-national' }}
         />
 
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -154,14 +157,14 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
       </Stack>
 
       <PrimaryButton type="submit" disabled={submitting}>
-        {submitting ? 'Creando cuenta…' : 'Siguiente'}
+        {values.wantsToSell ? 'Siguiente' : submitting ? 'Creando cuenta…' : 'Crear cuenta'}
       </PrimaryButton>
 
       <Typography align="center" sx={{ mt: 3, fontSize: 14, color: colors.text }}>
         ¿Ya tienes cuenta?{' '}
-        <Link href={loginHref} underline="always" sx={{ color: colors.link }}>
+        <AppLink href={loginHref} underline="always" sx={{ color: colors.link }}>
           Inicia sesión
-        </Link>
+        </AppLink>
       </Typography>
     </Box>
   );

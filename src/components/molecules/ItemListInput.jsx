@@ -11,6 +11,7 @@ import { colors } from '../../utils/theme';
  * Lista editable de valores (correos, teléfonos).
  * - items: string[]
  * - markFirstAsPrimary: muestra "Principal" en el primero y permite elegir otro al hacer clic
+ * - prefix / formatDraft: para teléfonos (bloque "+56" y formato mientras se escribe)
  */
 export default function ItemListInput({
   id,
@@ -23,6 +24,8 @@ export default function ItemListInput({
   normalize = (v) => v.trim(),
   errorMessage = 'Valor inválido',
   markFirstAsPrimary = false,
+  prefix,
+  formatDraft = (v) => v,
   error,
   inputProps,
 }) {
@@ -90,7 +93,8 @@ export default function ItemListInput({
           id={id}
           value={draft}
           placeholder={placeholder}
-          onChange={(e) => { setDraft(e.target.value); setLocalError(''); }}
+          prefix={prefix}
+          onChange={(e) => { setDraft(formatDraft(e.target.value)); setLocalError(''); }}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
           error={localError}
           {...inputProps}

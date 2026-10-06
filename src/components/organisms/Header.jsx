@@ -8,7 +8,7 @@ import HeaderActions from '../molecules/HeaderActions';
 import CategoryNav from '../molecules/CategoryNav';
 
 /** Si no se pasan handlers, navega por defecto (perfil, favoritos, carrito, búsqueda). */
-export default function Header({ user, cartCount, onSearch, onFavorites, onCart, onUser }) {
+export default function Header({ user, cartCount, onSearch, onFavorites, onCart, onLogout }) {
   const navigate = useNavigate();
 
   return (
@@ -22,11 +22,11 @@ export default function Header({ user, cartCount, onSearch, onFavorites, onCart,
             <SearchBar onSearch={onSearch ?? ((q) => navigate(`/buscar?q=${encodeURIComponent(q)}`))} />
           </Box>
           <HeaderActions
-            userName={user?.name}
+            user={user}
             cartCount={cartCount}
             onFavorites={onFavorites ?? (() => navigate('/lista-deseos'))}
             onCart={onCart ?? (() => navigate('/carrito'))}
-            onUser={onUser ?? (() => navigate('/perfil'))}
+            onLogout={onLogout}
           />
         </PageContainer>
       </Box>
