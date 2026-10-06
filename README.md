@@ -7,4 +7,3 @@ Sebastián Cadagán
 Benjamín Hernandez
 Francisco Rivera
 Mateo Villaroel
-Sebastián Guncke
