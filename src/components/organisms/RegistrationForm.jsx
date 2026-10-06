@@ -22,8 +22,8 @@ const INITIAL = {
   addresses: [], wantsToSell: false, acceptedTerms: false,
 };
 
-export default function RegistrationForm({ onSubmit, loginHref = '/login' }) {
-  const [values, setValues] = useState(INITIAL);
+export default function RegistrationForm({ onSubmit, initialValues, loginHref = '/login' }) {
+  const [values, setValues] = useState({ ...INITIAL, ...initialValues });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 

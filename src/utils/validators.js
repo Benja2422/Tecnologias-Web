@@ -72,3 +72,18 @@ export const passwordError = (v = '') => {
   if (!/[A-Za-z]/.test(v) || !/\d/.test(v)) return 'Incluye letras y números';
   return '';
 };
+
+export const normalizeUrl = (v = '') => {
+  const t = v.trim();
+  if (!t) return '';
+  return /^https?:\/\//i.test(t) ? t : `https://${t}`;
+};
+
+export const isValidUrl = (v = '') => {
+  try {
+    const u = new URL(normalizeUrl(v));
+    return /\.[a-z]{2,}$/i.test(u.hostname);
+  } catch {
+    return false;
+  }
+};
