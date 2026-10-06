@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthLayout from '../components/templates/AuthLayout';
 import RegistrationForm from '../components/organisms/RegistrationForm';
 import CompanyRegistrationForm from '../components/organisms/CompanyRegistrationForm';
@@ -9,14 +10,17 @@ export default function RegisterPage() {
   const [step, setStep] = useState(STEP.USER);
   const [userData, setUserData] = useState(null);
   const [companyDraft, setCompanyDraft] = useState(null);
+  const navigate = useNavigate();
 
   const register = async (payload) => {
     // TODO: conectar con src/services cuando exista el backend
-    console.log('Registro completo:', payload);
+    console.log('[Registro] Registro completo:', payload);
+    navigate('/login');
   };
 
   // Paso 1: si quiere vender pasa a datos de empresa; si no, termina el registro
   const handleUserSubmit = async (data) => {
+    console.log('[Registro] Datos de usuario (paso 1):', data);
     setUserData(data);
     if (data.wantsToSell) {
       setStep(STEP.COMPANY);

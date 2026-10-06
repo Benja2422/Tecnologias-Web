@@ -87,3 +87,22 @@ export const isValidUrl = (v = '') => {
     return false;
   }
 };
+
+// Móvil (9 xxxx xxxx) o fijo (ej. 2 xxxx xxxx)
+export const isValidChileanPhone = (v = '') => {
+  const d = v.replace(/\D/g, '');
+  const n = d.startsWith('56') ? d : `56${d}`;
+  return /^56[2-9]\d{8}$/.test(n);
+};
+
+// Número nacional (sin +56) con formato "9 1234 5678"
+export const formatNationalPhone = (v = '') => {
+  let d = v.replace(/\D/g, '');
+  if (d.startsWith('56') && d.length > 9) d = d.slice(2); // pegaron "+56 9..."
+  d = d.slice(0, 9);
+  if (d.length <= 1) return d;
+  if (d.length <= 5) return `${d[0]} ${d.slice(1)}`;
+  return `${d[0]} ${d.slice(1, 5)} ${d.slice(5)}`;
+};
+
+export const stripCountryCode = (v = '') => v.replace(/^\+?56\s*/, '');

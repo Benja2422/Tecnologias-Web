@@ -7,8 +7,9 @@ import PersonalInfoSection from '../components/organisms/PersonalInfoSection';
 import ContactListSection from '../components/organisms/ContactListSection';
 import SecuritySection from '../components/organisms/SecuritySection';
 import { colors } from '../utils/theme';
-import { isValidEmail, isValidPhone, normalizePhone } from '../utils/validators';
+import { isValidEmail, isValidChileanPhone, normalizePhone, formatNationalPhone, stripCountryCode } from '../utils/validators';
 import { mockProfile } from '../utils/mockProfile';
+import { currentUser } from '../utils/mockCatalog';
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState(mockProfile);
@@ -22,11 +23,11 @@ export default function ProfilePage() {
 
   const changePassword = async (data) => {
     // TODO: conectar con src/services. Si falla, lanza un Error con el mensaje a mostrar.
-    console.log('Cambiar contraseña:', Object.keys(data));
+    console.log('[Perfil] Actualizar contraseña:', data);
     setToast('Contraseña actualizada');
   };
 
-  const headerUser = { name: profile.fullName };
+  const headerUser = { ...currentUser, name: profile.fullName };
 
   return (
     <AccountLayout headerProps={{ user: headerUser, cartCount: 3 }}>
@@ -41,7 +42,10 @@ export default function ProfilePage() {
         key={profile.fullName}
         fullName={profile.fullName}
         rut={profile.rut}
-        onSave={(data) => update(data, 'Datos actualizados')}
+        onSave={(data) => {
+          console.log('[Perfil] Actualizar datos personales:', data);
+          update(data, 'Datos actualizados');
+        }}
       />
 
       <ContactListSection
@@ -50,7 +54,6 @@ export default function ProfilePage() {
         rowIcon={<MailOutlineIcon sx={{ fontSize: 18 }} />}
         items={profile.emails}
         onChange={(emails) => update({ emails })}
-        typeOptions={['Personal', 'Trabajo', 'Otro']}
         addLabel="Agregar correo"
         valueLabel="Correo electrónico"
         placeholder="nuevo.correo@ejemplo.cl"
@@ -65,13 +68,15 @@ export default function ProfilePage() {
         rowIcon={<PhoneOutlinedIcon sx={{ fontSize: 18 }} />}
         items={profile.phones}
         onChange={(phones) => update({ phones })}
-        typeOptions={['Móvil', 'Trabajo', 'Fijo', 'Otro']}
         addLabel="Agregar teléfono"
         valueLabel="Teléfono"
-        placeholder="+56 9 1234 5678"
-        validate={isValidPhone}
+        placeholder="9 1234 5678"
+        prefix="+56"
+        formatDraft={formatNationalPhone}
+        toDraft={stripCountryCode}
+        validate={isValidChileanPhone}
         normalize={(v) => (v.trim() ? normalizePhone(v) : '')}
-        errorMessage="Usa un número chileno: +56 9 1234 5678"
+        errorMessage="Ingresa un número chileno válido: 9 1234 5678"
         inputProps={{ type: 'tel' }}
       />
 

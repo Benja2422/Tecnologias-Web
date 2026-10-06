@@ -15,7 +15,7 @@ export default function ContactRow({ item, icon, onEdit, onDelete, canDelete = t
         {icon}
       </Box>
       <Typography sx={{ fontSize: 17, fontWeight: 500, color: '#222', wordBreak: 'break-all' }}>{item.value}</Typography>
-      <TagBadge label={item.isPrincipal ? 'Principal' : item.type} />
+      {item.isPrincipal && <TagBadge label="Principal" />}
       <Box sx={{ ml: 'auto', display: 'flex', gap: 1.5 }}>
         <ActionButton icon={<EditOutlinedIcon />} onClick={onEdit}>Editar</ActionButton>
         <ActionButton

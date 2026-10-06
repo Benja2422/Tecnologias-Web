@@ -6,18 +6,21 @@ import ContactRow from '../molecules/ContactRow';
 import ContactDialog from '../molecules/ContactDialog';
 import SecondaryButton from '../atoms/SecondaryButton';
 
+const newId = () => globalThis.crypto?.randomUUID?.() ?? `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
 // Garantiza que siempre exista un contacto principal
 const ensurePrincipal = (list) =>
   list.length && !list.some((i) => i.isPrincipal)
     ? list.map((i, idx) => (idx === 0 ? { ...i, isPrincipal: true } : i))
     : list;
 
-/** Lista editable de correos o teléfonos del perfil (agregar / editar / eliminar). */
+/** Lista editable de correos o teléfonos del perfil (crear / editar / eliminar). */
 export default function ContactListSection({
-  title, icon, rowIcon, items, onChange, typeOptions, addLabel, valueLabel, placeholder,
+  title, icon, rowIcon, items, onChange, addLabel, valueLabel, placeholder,
   validate, normalize = (v) => v.trim(), errorMessage, inputProps, divider = true,
+  prefix, formatDraft, toDraft,
 }) {
-  const [dialog, setDialog] = useState(null); // null | { item: ContactItem | null }
+  const [dialog, setDialog] = useState(null); // null | { item: ContactItem | null }  (null = crear)
 
   const submit = (form) => {
     const value = normalize(form.value);
@@ -27,7 +30,10 @@ export default function ContactListSection({
       return 'Ya lo agregaste';
     }
     const isPrincipal = form.isPrincipal || items.length === 0;
-    const saved = { id: editing?.id ?? crypto.randomUUID(), value, type: form.type, isPrincipal };
+    const saved = { id: editing?.id ?? newId(), value, isPrincipal };
+
+    // TODO: persistir con src/services
+    console.log(`[Perfil] ${editing ? 'Actualizar' : 'Crear'} - ${valueLabel}:`, saved);
 
     let next = editing ? items.map((i) => (i.id === editing.id ? saved : i)) : [...items, saved];
     if (isPrincipal) next = next.map((i) => (i.id === saved.id ? i : { ...i, isPrincipal: false }));
@@ -36,13 +42,17 @@ export default function ContactListSection({
     return null;
   };
 
-  const remove = (id) => onChange(ensurePrincipal(items.filter((i) => i.id !== id)));
+  const remove = (id) => {
+    // TODO: persistir con src/services
+    console.log(`[Perfil] Eliminar - ${valueLabel}:`, items.find((i) => i.id === id));
+    onChange(ensurePrincipal(items.filter((i) => i.id !== id)));
+  };
 
   const sorted = [...items].sort((a, b) => Number(b.isPrincipal) - Number(a.isPrincipal));
 
   return (
     <ProfileSection icon={icon} title={title} divider={divider}>
-      <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, mt: -1, borderTop: '1px solid transparent' }}>
+      <Box component="ul" sx={{ listStyle: 'none', m: 0, p: 0, mt: -1 }}>
         {sorted.map((item) => (
           <ContactRow
             key={item.id}
@@ -64,8 +74,10 @@ export default function ContactListSection({
           title={dialog.item ? `Editar ${valueLabel.toLowerCase()}` : addLabel}
           valueLabel={valueLabel}
           placeholder={placeholder}
-          typeOptions={typeOptions}
           initial={dialog.item}
+          prefix={prefix}
+          formatDraft={formatDraft}
+          toDraft={toDraft}
           inputProps={inputProps}
           onSubmit={submit}
           onClose={() => setDialog(null)}

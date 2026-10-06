@@ -14,4 +14,9 @@ export const featuredServices = [
   { id: 's4', name: 'Limpieza Hogar', rating: 4.8, price: 20000, image: null },
 ];
 
-export const currentUser = { name: 'Juan Pérez' };
+// roles: 'entrepreneur' y 'admin' habilitan los paneles en el menú del usuario
+export const currentUser = {
+  name: 'Juan Pérez',
+  email: 'juan.perez@ejemplo.cl',
+  roles: ['entrepreneur', 'admin'],
+};
