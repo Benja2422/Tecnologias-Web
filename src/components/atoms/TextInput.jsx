@@ -46,7 +46,7 @@ export default function TextInput({ error, sx, prefix, InputProps, ...props }) {
         },
         '& .MuiOutlinedInput-input': {
           padding: '0 16px',
-          height: '100%',
+          height: FIELD_HEIGHT,
           boxSizing: 'border-box',
           fontSize: 15,
           textAlign: 'left',
