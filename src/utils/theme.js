@@ -8,6 +8,8 @@ export const colors = {
   muted: '#6B6B6B',
   border: '#D9D9D9',
   footer: '#F0F0F0',
+  ink: '#1F2937',
+  surface: '#F3F4F6',
 };
 
 const theme = createTheme({

@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { colors } from '../../utils/theme';
 
-export default function FormField({ label, htmlFor, error, optional = false, children }) {
+export default function FormField({ label, htmlFor, error, hint, optional = false, children }) {
   return (
     <Box sx={{ width: '100%', textAlign: 'left' }}>
       <Typography
@@ -17,10 +17,12 @@ export default function FormField({ label, htmlFor, error, optional = false, chi
         )}
       </Typography>
       {children}
-      {error && (
+      {error ? (
         <Typography role="alert" sx={{ mt: 0.5, mx: 0.5, fontSize: 12, color: 'error.main' }}>
           {error}
         </Typography>
+      ) : (
+        hint && <Typography sx={{ mt: 0.5, mx: 0.5, fontSize: 12, color: colors.muted }}>{hint}</Typography>
       )}
     </Box>
   );
