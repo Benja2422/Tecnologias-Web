@@ -1,10 +1,10 @@
 // Datos de ejemplo. Reemplazar por llamadas a src/services cuando exista el backend.
 // `image`: URL o import desde src/assets (si es null se muestra un placeholder).
 export const featuredProducts = [
-  { id: 'p1', name: 'Audífonos Bluetooth', rating: 4.5, price: 29990, image: null },
-  { id: 'p2', name: 'Zapatillas Running', rating: 4.8, price: 45990, image: null },
-  { id: 'p3', name: 'Mochila Urbana', rating: 4.2, price: 19990, image: null },
-  { id: 'p4', name: 'Smartwatch Pro', rating: 4.6, price: 89990, image: null },
+  { id: 'p1', href: '/producto/p1', name: 'Audífonos Bluetooth', rating: 4.5, price: 29990, image: null },
+  { id: 'p2', href: '/producto/p2', name: 'Zapatillas Running', rating: 4.8, price: 45990, image: null },
+  { id: 'p3', href: '/producto/p3', name: 'Mochila Urbana', rating: 4.2, price: 19990, image: null },
+  { id: 'p4', href: '/producto/p4', name: 'Smartwatch Pro', rating: 4.6, price: 89990, image: null },
 ];
 
 export const featuredServices = [

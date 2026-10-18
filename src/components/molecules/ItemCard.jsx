@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import AppLink from '../atoms/AppLink';
 import FavoriteButton from '../atoms/FavoriteButton';
 import RatingStars from '../atoms/RatingStars';
 import { colors } from '../../utils/theme';
@@ -7,7 +8,7 @@ import { formatPrice } from '../../utils/format';
 
 /** Tarjeta de producto o servicio. Cambia solo el texto/acción del botón. */
 export default function ItemCard({ item, actionLabel, onAction, isFavorite = false, onToggleFavorite }) {
-  const { name, image, rating, price, priceSuffix = '' } = item;
+  const { name, image, rating, price, priceSuffix = '', href } = item;
 
   return (
     <Box
@@ -18,6 +19,7 @@ export default function ItemCard({ item, actionLabel, onAction, isFavorite = fal
       }}
     >
       <Box sx={{ position: 'relative', height: 140, mb: 1, borderRadius: 2, overflow: 'hidden', bgcolor: '#F4F4F4' }}>
+        {href && <AppLink href={href} aria-label={`Ver ${name}`} tabIndex={-1} sx={{ position: 'absolute', inset: 0 }} />}
         {image ? (
           <Box component="img" src={image} alt={name} loading="lazy" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -30,7 +32,11 @@ export default function ItemCard({ item, actionLabel, onAction, isFavorite = fal
         </Box>
       </Box>
 
-      <Typography component="h3" sx={{ fontSize: 16, fontWeight: 500, color: colors.text }}>{name}</Typography>
+      <Typography component="h3" sx={{ fontSize: 16, fontWeight: 500, color: colors.text }}>
+        {href ? (
+          <AppLink href={href} underline="none" sx={{ color: 'inherit', fontFamily: 'inherit', '&:hover': { color: colors.primary } }}>{name}</AppLink>
+        ) : name}
+      </Typography>
       <RatingStars value={rating} />
       <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#222', mb: 1 }}>
         {formatPrice(price)}{priceSuffix}

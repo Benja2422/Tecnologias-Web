@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import CatalogPage from '../pages/CatalogPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
+import ProductDetailPage from '../pages/ProductDetailPage';
 import ProfilePage from '../pages/ProfilePage';
 import AdminUsersPage from '../pages/AdminUsersPage';
 import NotFoundPage from '../pages/NotFoundPage';
@@ -12,6 +13,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<CatalogPage />} />
+      <Route path="/producto/:productId" element={<ProductDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/registro" element={<RegisterPage />} />
       <Route path="/perfil" element={<ProfilePage />} />
