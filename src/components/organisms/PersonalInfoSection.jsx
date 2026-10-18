@@ -6,6 +6,7 @@ import FormField from '../molecules/FormField';
 import TextInput from '../atoms/TextInput';
 import PrimaryButton from '../atoms/PrimaryButton';
 import SecondaryButton from '../atoms/SecondaryButton';
+import { formatName, isValidName } from '../../utils/validators';
 
 const buttonSx = { height: 44, px: 3, py: 0, fontSize: 15 };
 
@@ -18,7 +19,7 @@ export default function PersonalInfoSection({ fullName, rut, onSave }) {
 
   const save = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return setError('Ingresa tu nombre completo');
+    if (!isValidName(name)) return setError('Ingresa un nombre válido (solo letras)');
     setSaving(true);
     try {
       await onSave?.({ fullName: name.trim() });
@@ -35,7 +36,7 @@ export default function PersonalInfoSection({ fullName, rut, onSave }) {
             <TextInput
               id="fullName"
               value={name}
-              onChange={(e) => { setName(e.target.value); setError(''); }}
+              onChange={(e) => { setName(formatName(e.target.value)); setError(''); }}
               error={error}
               autoComplete="name"
             />

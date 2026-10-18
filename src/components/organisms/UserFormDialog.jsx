@@ -8,7 +8,7 @@ import PrimaryButton from '../atoms/PrimaryButton';
 import SecondaryButton from '../atoms/SecondaryButton';
 import { ACCOUNT_TYPES } from '../../utils/constants';
 import { colors } from '../../utils/theme';
-import { formatRut, isValidRut, formatDate, isValidDate, isAdult, isValidEmail, passwordError } from '../../utils/validators';
+import { formatRut, isValidRut, formatDate, isValidDate, isAdult, formatName, isValidName, isValidEmail, passwordError } from '../../utils/validators';
 
 const full = { gridColumn: '1 / -1' };
 
@@ -45,8 +45,8 @@ export default function UserFormDialog({ user = null, onSave, onClose }) {
 
   const validate = () => {
     const e = {};
-    if (!values.firstName.trim()) e.firstName = 'Ingresa el nombre';
-    if (!values.lastName.trim()) e.lastName = 'Ingresa el apellido';
+    if (!isValidName(values.firstName)) e.firstName = 'Ingresa un nombre válido (solo letras)';
+    if (!isValidName(values.lastName)) e.lastName = 'Ingresa un apellido válido (solo letras)';
     if (!isValidRut(values.rut)) e.rut = 'Ingresa un RUN válido';
     if (!isValidDate(values.birthDate)) e.birthDate = 'Usa el formato DD/MM/AAAA';
     else if (!isAdult(values.birthDate)) e.birthDate = 'Debe ser mayor de 18 años';
@@ -97,10 +97,10 @@ export default function UserFormDialog({ user = null, onSave, onClose }) {
         {formError && <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>}
         <Box sx={{ display: 'grid', gap: 2.5, gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, pt: 1 }}>
           <FormField label="Nombre" htmlFor="userFirstName">
-            <TextInput id="userFirstName" autoFocus autoComplete="off" placeholder="Ej. Juan" {...set('firstName')} />
+            <TextInput id="userFirstName" autoFocus autoComplete="off" placeholder="Ej. Juan" {...set('firstName', formatName)} />
           </FormField>
           <FormField label="Apellido" htmlFor="userLastName">
-            <TextInput id="userLastName" autoComplete="off" placeholder="Ej. Pérez" {...set('lastName')} />
+            <TextInput id="userLastName" autoComplete="off" placeholder="Ej. Pérez" {...set('lastName', formatName)} />
           </FormField>
           <FormField label="RUN" htmlFor="userRut">
             <TextInput id="userRut" placeholder="12.345.678-9" {...set('rut', formatRut)} />

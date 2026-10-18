@@ -74,7 +74,7 @@ export default function UserMenu({ user, onLogout }) {
         onClose={close}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        MenuListProps={{ 'aria-labelledby': 'user-menu-button', disablePadding: true }}
+        slotProps={{ list: { 'aria-labelledby': 'user-menu-button', disablePadding: true } }}
         sx={{
           mt: 1,
           '& .MuiPaper-root': {

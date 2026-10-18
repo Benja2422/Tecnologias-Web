@@ -5,6 +5,7 @@ import TextInput from '../atoms/TextInput';
 import AddButton from '../atoms/AddButton';
 import Badge from '../atoms/Badge';
 import FormField from './FormField';
+import ConfirmDialog from './ConfirmDialog';
 import { colors } from '../../utils/theme';
 
 /**
@@ -12,6 +13,7 @@ import { colors } from '../../utils/theme';
  * - items: string[]
  * - markFirstAsPrimary: muestra "Principal" en el primero y permite elegir otro al hacer clic
  * - prefix / formatDraft: para teléfonos (bloque "+56" y formato mientras se escribe)
+ * - itemName: nombre del elemento para el mensaje de confirmación al quitarlo ("correo", "teléfono")
  */
 export default function ItemListInput({
   id,
@@ -24,6 +26,7 @@ export default function ItemListInput({
   normalize = (v) => v.trim(),
   errorMessage = 'Valor inválido',
   markFirstAsPrimary = false,
+  itemName = 'elemento',
   prefix,
   formatDraft = (v) => v,
   error,
@@ -31,6 +34,7 @@ export default function ItemListInput({
 }) {
   const [draft, setDraft] = useState('');
   const [localError, setLocalError] = useState('');
+  const [toRemove, setToRemove] = useState(null); // índice pendiente de confirmar
 
   const add = () => {
     const value = normalize(draft);
@@ -42,7 +46,10 @@ export default function ItemListInput({
     setLocalError('');
   };
 
-  const remove = (index) => onChange(items.filter((_, i) => i !== index));
+  const confirmRemove = () => {
+    onChange(items.filter((_, i) => i !== toRemove));
+    setToRemove(null);
+  };
 
   const makePrimary = (index) => {
     if (!markFirstAsPrimary || index === 0) return;
@@ -79,7 +86,7 @@ export default function ItemListInput({
               <IconButton
                 size="small"
                 aria-label={`Quitar ${item}`}
-                onClick={(e) => { e.stopPropagation(); remove(index); }}
+                onClick={(e) => { e.stopPropagation(); setToRemove(index); }}
               >
                 <CloseIcon fontSize="small" />
               </IconButton>
@@ -88,7 +95,7 @@ export default function ItemListInput({
         </Box>
       )}
 
-      <Stack direction="row" spacing={1} alignItems="flex-start">
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'flex-start' }}>
         <TextInput
           id={id}
           value={draft}
@@ -101,6 +108,16 @@ export default function ItemListInput({
         />
         <AddButton onClick={add} />
       </Stack>
+
+      {toRemove !== null && (
+        <ConfirmDialog
+          title={`Eliminar ${itemName}`}
+          message={`¿Seguro que quieres eliminar "${items[toRemove]}"?`}
+          confirmLabel="Eliminar"
+          onConfirm={confirmRemove}
+          onClose={() => setToRemove(null)}
+        />
+      )}
     </FormField>
   );
 }

@@ -13,7 +13,7 @@ import SectionTitle from '../atoms/SectionTitle';
 import PrimaryButton from '../atoms/PrimaryButton';
 import { colors } from '../../utils/theme';
 import {
-  formatRut, isValidRut, formatDate, isValidDate, isAdult,
+  formatRut, isValidRut, formatDate, isValidDate, isAdult, formatName, isValidName,
   isValidEmail, isValidPhone, normalizePhone, formatNationalPhone, passwordError,
 } from '../../utils/validators';
 
@@ -41,8 +41,8 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
 
   const validate = () => {
     const e = {};
-    if (!values.firstName.trim()) e.firstName = 'Ingresa tu nombre';
-    if (!values.lastName.trim()) e.lastName = 'Ingresa tu apellido';
+    if (!isValidName(values.firstName)) e.firstName = 'Ingresa un nombre válido (solo letras)';
+    if (!isValidName(values.lastName)) e.lastName = 'Ingresa un apellido válido (solo letras)';
     if (!isValidRut(values.rut)) e.rut = 'Ingresa un RUT válido';
     if (!isValidDate(values.birthDate)) e.birthDate = 'Usa el formato DD/MM/AAAA';
     else if (!isAdult(values.birthDate)) e.birthDate = 'Debes ser mayor de 18 años';
@@ -62,7 +62,12 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
     setSubmitting(true);
     try {
       const { confirmPassword, ...payload } = values; // eslint-disable-line no-unused-vars
-      await onSubmit?.({ ...payload, primaryEmail: values.emails[0] });
+      await onSubmit?.({
+        ...payload,
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        primaryEmail: values.emails[0],
+      });
     } finally {
       setSubmitting(false);
     }
@@ -75,10 +80,10 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
       <Stack spacing={2.5}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <FormField label="Nombre" htmlFor="firstName">
-            <TextInput id="firstName" placeholder="Ej. Juan" autoComplete="given-name" {...text('firstName')} />
+            <TextInput id="firstName" placeholder="Ej. Juan" autoComplete="given-name" {...text('firstName', formatName)} />
           </FormField>
           <FormField label="Apellido" htmlFor="lastName">
-            <TextInput id="lastName" placeholder="Ej. Pérez" autoComplete="family-name" {...text('lastName')} />
+            <TextInput id="lastName" placeholder="Ej. Pérez" autoComplete="family-name" {...text('lastName', formatName)} />
           </FormField>
         </Stack>
 
@@ -106,6 +111,7 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
           icon={<MailOutlineIcon fontSize="small" />}
           validate={isValidEmail}
           errorMessage="Ingresa un correo válido"
+          itemName="correo"
           markFirstAsPrimary
           error={errors.emails}
           inputProps={{ type: 'email', autoComplete: 'email' }}
@@ -123,6 +129,7 @@ export default function RegistrationForm({ onSubmit, initialValues, loginHref = 
           validate={isValidPhone}
           normalize={(v) => (v.trim() ? normalizePhone(v) : '')}
           errorMessage="Ingresa un celular chileno válido: 9 1234 5678"
+          itemName="teléfono"
           error={errors.phones}
           inputProps={{ type: 'tel', autoComplete: 'tel-national' }}
         />

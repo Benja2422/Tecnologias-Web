@@ -1,8 +1,8 @@
 /**
  * División político-administrativa de Chile: Región → Provincia → Comuna.
- * Generado a partir del script SQL del proyecto (tablas Region, Provincia y Comuna).
- * Regiones ordenadas de norte a sur; provincias por ID; comunas por orden alfabético.
- * Para actualizar los datos, volver a generar este archivo desde el SQL.
+ * Generado a partir de Chile.txt (tablas Region, Provincia y Comuna de la base de datos).
+ * Los IDs son los de la base de datos; los de provincia son únicos globalmente.
+ * Orden: regiones de norte a sur, provincias por ID y comunas alfabéticamente.
  */
 export const regions = [
   {
@@ -786,10 +786,17 @@ export const regions = [
 
 const toOption = ({ id, name }) => ({ id, name });
 
-export const getRegionNames = () => regions.map(toOption);
+/** Opciones para los menús desplegables: [{ id, name }] */
+export const getRegionOptions = () => regions.map(toOption);
 
-export const getProvinceNames = (regionId) =>
+export const getProvinceOptions = (regionId) =>
   regions.find((r) => r.id === regionId)?.provinces.map(toOption) ?? [];
 
-export const getCommuneNames = (regionId, provinceId) =>
-  regions.find((r) => r.id === regionId)?.provinces.find((p) => p.id === provinceId)?.communes ?? [];
+// Los IDs de provincia son únicos, no hace falta la región
+export const getCommuneOptions = (provinceId) => {
+  for (const region of regions) {
+    const province = region.provinces.find((p) => p.id === provinceId);
+    if (province) return province.communes;
+  }
+  return [];
+};

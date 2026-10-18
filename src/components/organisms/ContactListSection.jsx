@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ProfileSection from '../molecules/ProfileSection';
 import ContactRow from '../molecules/ContactRow';
 import ContactDialog from '../molecules/ContactDialog';
+import ConfirmDialog from '../molecules/ConfirmDialog';
 import SecondaryButton from '../atoms/SecondaryButton';
 
 const newId = () => globalThis.crypto?.randomUUID?.() ?? `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -21,6 +22,7 @@ export default function ContactListSection({
   prefix, formatDraft, toDraft,
 }) {
   const [dialog, setDialog] = useState(null); // null | { item: ContactItem | null }  (null = crear)
+  const [toDelete, setToDelete] = useState(null); // contacto pendiente de confirmar su eliminación
 
   const submit = (form) => {
     const value = normalize(form.value);
@@ -42,10 +44,11 @@ export default function ContactListSection({
     return null;
   };
 
-  const remove = (id) => {
+  const confirmRemove = () => {
     // TODO: persistir con src/services
-    console.log(`[Perfil] Eliminar - ${valueLabel}:`, items.find((i) => i.id === id));
-    onChange(ensurePrincipal(items.filter((i) => i.id !== id)));
+    console.log(`[Perfil] Eliminar - ${valueLabel}:`, toDelete);
+    onChange(ensurePrincipal(items.filter((i) => i.id !== toDelete.id)));
+    setToDelete(null);
   };
 
   const sorted = [...items].sort((a, b) => Number(b.isPrincipal) - Number(a.isPrincipal));
@@ -60,7 +63,7 @@ export default function ContactListSection({
             icon={rowIcon}
             canDelete={items.length > 1}
             onEdit={() => setDialog({ item })}
-            onDelete={() => remove(item.id)}
+            onDelete={() => setToDelete(item)}
           />
         ))}
       </Box>
@@ -81,6 +84,20 @@ export default function ContactListSection({
           inputProps={inputProps}
           onSubmit={submit}
           onClose={() => setDialog(null)}
+        />
+      )}
+
+      {toDelete && (
+        <ConfirmDialog
+          title={`Eliminar ${valueLabel.toLowerCase()}`}
+          message={
+            toDelete.isPrincipal
+              ? `¿Seguro que quieres eliminar "${toDelete.value}"? Es tu contacto principal, así que el siguiente de la lista pasará a ser el principal.`
+              : `¿Seguro que quieres eliminar "${toDelete.value}"? Esta acción no se puede deshacer.`
+          }
+          confirmLabel="Eliminar"
+          onConfirm={confirmRemove}
+          onClose={() => setToDelete(null)}
         />
       )}
     </ProfileSection>
