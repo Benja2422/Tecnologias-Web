@@ -1,4 +1,5 @@
 import { MenuItem, Typography } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextInput, { FIELD_HEIGHT } from './TextInput';
 
 /**
@@ -13,6 +14,7 @@ export default function SelectInput({ options, placeholder = 'Selecciona una opc
         ...slotProps,
         select: {
           displayEmpty: true,
+          IconComponent: KeyboardArrowDownIcon,
           renderValue: (value) =>
             options.find((o) => o.id === value)?.name ?? (
               <Typography component="span" sx={{ fontSize: 15, color: '#9A9A9A' }}>{placeholder}</Typography>
