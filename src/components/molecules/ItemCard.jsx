@@ -6,8 +6,11 @@ import RatingStars from '../atoms/RatingStars';
 import { colors } from '../../utils/theme';
 import { formatPrice } from '../../utils/format';
 
-/** Tarjeta de producto o servicio. Cambia solo el texto/acción del botón. */
-export default function ItemCard({ item, actionLabel, onAction, isFavorite = false, onToggleFavorite }) {
+/**
+ * Tarjeta de producto o servicio. Cambia solo el texto/acción del botón.
+ * imageHeight: alto de la foto en px. outlinedStars: estrellas con contorno oscuro (listado de categorías).
+ */
+export default function ItemCard({ item, actionLabel, onAction, isFavorite = false, onToggleFavorite, imageHeight = 140, outlinedStars = false }) {
   const { name, image, rating, price, priceSuffix = '', href } = item;
 
   return (
@@ -18,7 +21,7 @@ export default function ItemCard({ item, actionLabel, onAction, isFavorite = fal
         border: '1px solid #EEE', borderRadius: 3, boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
       }}
     >
-      <Box sx={{ position: 'relative', height: 140, mb: 1, borderRadius: 2, overflow: 'hidden', bgcolor: '#F4F4F4' }}>
+      <Box sx={{ position: 'relative', height: imageHeight, mb: 1, borderRadius: 2, overflow: 'hidden', bgcolor: '#F4F4F4' }}>
         {href && <AppLink href={href} aria-label={`Ver ${name}`} tabIndex={-1} sx={{ position: 'absolute', inset: 0 }} />}
         {image ? (
           <Box component="img" src={image} alt={name} loading="lazy" sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -37,7 +40,7 @@ export default function ItemCard({ item, actionLabel, onAction, isFavorite = fal
           <AppLink href={href} underline="none" sx={{ color: 'inherit', fontFamily: 'inherit', '&:hover': { color: colors.primary } }}>{name}</AppLink>
         ) : name}
       </Typography>
-      <RatingStars value={rating} />
+      <RatingStars value={rating} {...(outlinedStars && { outlined: true, color: colors.ink, size: 18 })} />
       <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#222', mb: 1 }}>
         {formatPrice(price)}{priceSuffix}
       </Typography>

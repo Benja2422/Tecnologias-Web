@@ -11,15 +11,15 @@ const btn = {
 
 const n = (v) => v.toLocaleString('en-US');
 
-export default function PaginationBar({ page, pageSize, total, onChange }) {
+export default function PaginationBar({ page, pageSize, total, onChange, itemLabel = 'usuarios', sx }) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2.5 }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2.5, ...sx }}>
       <Typography sx={{ fontSize: 13, color: '#4B5563' }}>
-        Mostrando <b>{from}-{to}</b> de <b>{n(total)}</b> usuarios
+        Mostrando <b>{from}-{to}</b> de <b>{n(total)}</b> {itemLabel}
       </Typography>
       <Box component="nav" aria-label="Paginación" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Button sx={btn} disabled={page <= 1} onClick={() => onChange(page - 1)}>Anterior</Button>

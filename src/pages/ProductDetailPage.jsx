@@ -9,8 +9,10 @@ import ProductGallery from '../components/molecules/ProductGallery';
 import ProductPurchasePanel from '../components/organisms/ProductPurchasePanel';
 import ProductTabsSection from '../components/organisms/ProductTabsSection';
 import RelatedProductsSection from '../components/organisms/RelatedProductsSection';
+import { useCart } from '../contexts/CartContext';
+import { toCartLine } from '../utils/cart';
 import { currentUser } from '../utils/mockCatalog';
-import { getProductById, getRatingInfo, getRelatedProducts } from '../utils/mockProducts';
+import { getProductById, getProductCategories, getRatingInfo, getRelatedProducts } from '../utils/mockProducts';
 import { colors } from '../utils/theme';
 
 function ProductNotFound() {
@@ -36,7 +38,7 @@ function ProductDetail({ product }) {
   );
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
-  const [cartCount, setCartCount] = useState(3);
+  const { addItem } = useCart();
   const [questions, setQuestions] = useState(product.questions ?? []);
   const [toast, setToast] = useState('');
 
@@ -76,7 +78,7 @@ function ProductDetail({ product }) {
       unitPrice: item.price,
     };
     console.log('[Carrito] Añadir producto:', line);
-    setCartCount((n) => n + qty);
+    addItem(toCartLine(item, { quantity: qty, variant: chosenVariant, image: item === product ? galleryImages[0]?.src : undefined }));
     setToast(`${qty > 1 ? `${qty} unidades de ` : ''}${item.name} añadido al carrito`);
   };
 
@@ -96,12 +98,12 @@ function ProductDetail({ product }) {
 
   const crumbs = [
     { label: 'Inicio', href: '/' },
-    ...product.categories.map((label) => ({ label, href: `/?categoria=${encodeURIComponent(label)}` })),
+    ...getProductCategories(product).map(({ id, name }) => ({ label: name, href: `/categorias/${id}` })),
     { label: product.name },
   ];
 
   return (
-    <MainLayout headerProps={{ user: currentUser, cartCount }}>
+    <MainLayout headerProps={{ user: currentUser }}>
       <PageContainer sx={{ pt: 3, pb: { xs: 6, md: 10 } }}>
         <Breadcrumb items={crumbs} />
 
@@ -161,7 +163,7 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <MainLayout headerProps={{ user: currentUser, cartCount: 3 }}>
+      <MainLayout headerProps={{ user: currentUser }}>
         <ProductNotFound />
       </MainLayout>
     );

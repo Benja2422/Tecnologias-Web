@@ -7,10 +7,11 @@ const VARIANTS = {
 };
 const DEFAULT = { color: '#555', bg: '#EEEEEE' };
 
-export default function TagBadge({ label }) {
+/** outlined: contorno rojo sobre fondo blanco (checkout). */
+export default function TagBadge({ label, outlined = false }) {
   const { color, bg } = VARIANTS[label] ?? DEFAULT;
   return (
-    <Box component="span" sx={{ color, bgcolor: bg, fontSize: 12, fontWeight: 600, px: 1.25, py: 0.4, borderRadius: 1, whiteSpace: 'nowrap' }}>
+    <Box component="span" sx={{ color, bgcolor: outlined ? '#fff' : bg, fontSize: 12, fontWeight: 600, px: 1.25, py: 0.4, borderRadius: 1, whiteSpace: 'nowrap', ...(outlined && { border: `1px solid ${color}`, fontSize: 11, px: 1, py: 0.15 }) }}>
       {label}
     </Box>
   );

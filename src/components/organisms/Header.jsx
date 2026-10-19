@@ -6,10 +6,15 @@ import Logo from '../atoms/Logo';
 import SearchBar from '../molecules/SearchBar';
 import HeaderActions from '../molecules/HeaderActions';
 import CategoryNav from '../molecules/CategoryNav';
+import { useCart } from '../../contexts/CartContext';
 
-/** Si no se pasan handlers, navega por defecto (perfil, favoritos, carrito, búsqueda). */
-export default function Header({ user, cartCount, onSearch, onFavorites, onCart, onLogout }) {
+/**
+ * Si no se pasan handlers, navega por defecto (perfil, favoritos, carrito, búsqueda).
+ * Si no se pasa cartCount, muestra la cantidad de líneas del carrito compartido.
+ */
+export default function Header({ user, cartCount, searchQuery = '', onSearch, onFavorites, onCart, onLogout }) {
   const navigate = useNavigate();
+  const cart = useCart();
 
   return (
     <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 10, bgcolor: '#fff' }}>
@@ -19,11 +24,18 @@ export default function Header({ user, cartCount, onSearch, onFavorites, onCart,
             <Logo size={22} />
           </AppLink>
           <Box sx={{ flex: '0 1 500px', minWidth: 0, display: { xs: 'none', md: 'block' } }}>
-            <SearchBar onSearch={onSearch ?? ((q) => navigate(`/buscar?q=${encodeURIComponent(q)}`))} />
+            <SearchBar
+              defaultValue={searchQuery}
+              onSearch={onSearch ?? ((q) => {
+                if (!q) return;
+                console.log('[Búsqueda] Buscar:', { query: q });
+                navigate(`/buscar?q=${encodeURIComponent(q)}`);
+              })}
+            />
           </Box>
           <HeaderActions
             user={user}
-            cartCount={cartCount}
+            cartCount={cartCount ?? cart.count}
             onFavorites={onFavorites ?? (() => navigate('/lista-deseos'))}
             onCart={onCart ?? (() => navigate('/carrito'))}
             onLogout={onLogout}

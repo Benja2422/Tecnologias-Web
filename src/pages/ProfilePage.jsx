@@ -30,7 +30,7 @@ export default function ProfilePage() {
   const headerUser = { ...currentUser, name: profile.fullName };
 
   return (
-    <AccountLayout headerProps={{ user: headerUser, cartCount: 3 }}>
+    <AccountLayout headerProps={{ user: headerUser }}>
       <Typography component="h1" sx={{ fontSize: { xs: 28, md: 36 }, fontWeight: 600, color: colors.text }}>
         Mi perfil
       </Typography>

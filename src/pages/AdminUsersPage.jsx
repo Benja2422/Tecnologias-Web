@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
   const exportCsv = () => downloadCsv('usuarios-todomart.csv', users, CSV_COLUMNS);
 
   return (
-    <AdminLayout headerProps={{ user: currentUser, cartCount: 3 }} crumbs={CRUMBS} admin={mockAdmin}>
+    <AdminLayout headerProps={{ user: currentUser }} crumbs={CRUMBS} admin={mockAdmin}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2, mb: 4 }}>
         <Typography component="h1" sx={{ fontSize: { xs: 26, md: 32 }, fontWeight: 700, color: colors.ink }}>
           Gestión de Usuarios

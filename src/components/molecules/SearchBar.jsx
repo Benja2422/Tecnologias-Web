@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputBase, Box } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { colors } from '../../utils/theme';
 
-export default function SearchBar({ onSearch, placeholder = 'Buscar productos y servicios...' }) {
-  const [query, setQuery] = useState('');
+/** defaultValue: texto inicial (p. ej. la búsqueda actual); se actualiza si cambia. */
+export default function SearchBar({ onSearch, defaultValue = '', placeholder = 'Buscar productos y servicios...' }) {
+  const [query, setQuery] = useState(defaultValue);
+  useEffect(() => { setQuery(defaultValue); }, [defaultValue]);
 
   return (
     <Box

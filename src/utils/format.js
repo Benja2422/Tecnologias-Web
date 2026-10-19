@@ -15,3 +15,6 @@ export const formatShortDate = (iso = '') => {
   const [y, m, d] = iso.split('-').map(Number);
   return y && m && d ? `${String(d).padStart(2, '0')} ${MONTHS[m - 1]} ${y}` : '';
 };
+
+/** Agrega puntos de miles a un texto de dígitos: '1500000' → '1.500.000'. */
+export const formatThousands = (digits = '') => digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');

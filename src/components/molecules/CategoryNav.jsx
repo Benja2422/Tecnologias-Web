@@ -8,7 +8,7 @@ const ITEMS = [
   { label: 'Categorías', href: '/categorias', icon: <MenuIcon sx={{ fontSize: 18 }} /> },
   { label: 'Productos', href: '/productos' },
   { label: 'Servicios', href: '/servicios' },
-  { label: 'Tecnologia', href: '/categorias/tecnologia' },
+  { label: 'Tecnología', href: '/categorias/tecnologia' },
   { label: 'Hogar', href: '/categorias/hogar' },
   { label: 'Vender', href: '/vender', icon: <LocalOfferOutlinedIcon sx={{ fontSize: 18 }} /> },
 ];

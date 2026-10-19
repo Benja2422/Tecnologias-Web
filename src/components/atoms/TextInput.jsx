@@ -35,7 +35,7 @@ export default function TextInput({ error, sx, prefix, InputProps, inputProps, S
       fullWidth
       variant="outlined"
       error={Boolean(error)}
-      helperText={error || undefined}
+      helperText={typeof error === 'string' ? error : undefined}
       slotProps={{
         ...slotProps,
         input,

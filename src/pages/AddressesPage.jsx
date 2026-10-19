@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 import AccountLayout from '../components/templates/AccountLayout';
 import AddressBook from '../components/organisms/AddressBook';
+import { useAddresses } from '../contexts/AddressesContext';
 import { mockProfile } from '../utils/mockProfile';
 import { currentUser } from '../utils/mockCatalog';
 
 export default function AddressesPage() {
-  const [addresses, setAddresses] = useState(mockProfile.addresses);
+  const { addresses, setAddresses } = useAddresses();
   const [toast, setToast] = useState('');
 
   const update = (next, message) => {
@@ -16,7 +17,7 @@ export default function AddressesPage() {
   };
 
   return (
-    <AccountLayout headerProps={{ user: { ...currentUser, name: mockProfile.fullName }, cartCount: 3 }}>
+    <AccountLayout headerProps={{ user: { ...currentUser, name: mockProfile.fullName } }}>
       <AddressBook addresses={addresses} onChange={update} />
 
       <Snackbar open={Boolean(toast)} autoHideDuration={3000} onClose={() => setToast('')} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>

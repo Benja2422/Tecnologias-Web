@@ -19,3 +19,6 @@ export const mockProfile = {
     { id: 'a3', label: 'Casa de mamá', isPrincipal: false, street: 'Calle Las Lilas', number: '789', regionId: 13, region: 'Metropolitana de Santiago', provinceId: 131, province: 'Santiago', communeId: 13123, commune: 'Providencia' },
   ],
 };
+
+/** Teléfono principal del perfil (se muestra como contacto en el despacho). */
+export const getPrincipalPhone = () => (mockProfile.phones.find((p) => p.isPrincipal) ?? mockProfile.phones[0])?.value ?? '';
