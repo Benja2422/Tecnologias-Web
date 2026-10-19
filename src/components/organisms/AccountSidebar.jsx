@@ -1,10 +1,10 @@
 import { Box, Button, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutlined';
+import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatBubbleOutlined';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -13,11 +13,11 @@ import SidebarNav from '../molecules/SidebarNav';
 import { colors } from '../../utils/theme';
 
 const ITEMS = [
-  { label: 'Mi perfil', to: '/perfil', icon: <PersonOutlineIcon /> },
+  { label: 'Mi perfil', to: '/perfil', icon: <PersonOutlinedIcon /> },
   { label: 'Mis direcciones', to: '/direcciones', icon: <PlaceOutlinedIcon /> },
   { label: 'Mis pedidos', to: '/pedidos', icon: <ShoppingBagOutlinedIcon /> },
   { label: 'Mis cotizaciones', to: '/cotizaciones', icon: <DescriptionOutlinedIcon /> },
-  { label: 'Mensajes', to: '/mensajes', icon: <ChatBubbleOutlineIcon /> },
+  { label: 'Mensajes', to: '/mensajes', icon: <ChatBubbleOutlinedIcon /> },
   { label: 'Mis reseñas', to: '/resenas', icon: <StarBorderIcon /> },
   { label: 'Mi lista de deseos', to: '/lista-deseos', icon: <FavoriteBorderIcon /> },
   { label: 'Devoluciones y reembolsos', to: '/devoluciones', icon: <ReplayIcon /> },

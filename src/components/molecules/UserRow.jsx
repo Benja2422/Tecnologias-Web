@@ -1,6 +1,6 @@
 import { Box, TableCell, TableRow, Typography } from '@mui/material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AccountTypeBadge from '../atoms/AccountTypeBadge';
 import StatusBadge from '../atoms/StatusBadge';
 import IconActionButton from '../atoms/IconActionButton';
@@ -23,7 +23,7 @@ export default function UserRow({ user, onEdit, onDelete }) {
       <TableCell sx={cell} align="right">
         <Box sx={{ display: 'inline-flex', gap: 1 }}>
           <IconActionButton label={`Editar a ${fullName}`} onClick={() => onEdit(user)}><EditOutlinedIcon /></IconActionButton>
-          <IconActionButton label={`Eliminar a ${fullName}`} danger onClick={() => onDelete(user)}><DeleteOutlineIcon /></IconActionButton>
+          <IconActionButton label={`Eliminar a ${fullName}`} danger onClick={() => onDelete(user)}><DeleteOutlinedIcon /></IconActionButton>
         </Box>
       </TableCell>
     </TableRow>

@@ -1,6 +1,6 @@
 import { Avatar, Box, Breadcrumbs, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import AppLink from '../atoms/AppLink';
 import { colors } from '../../utils/theme';
 
@@ -20,7 +20,7 @@ export default function AdminTopBar({ crumbs, admin }) {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pl: 3, borderLeft: '1px solid #E5E7EB' }}>
         <Avatar sx={{ width: 38, height: 38, bgcolor: '#F3F4F6', color: '#9CA3AF', border: '1px solid #E5E7EB' }}>
-          <PersonOutlineIcon fontSize="small" />
+          <PersonOutlinedIcon fontSize="small" />
         </Avatar>
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <Typography sx={{ fontSize: 14, fontWeight: 600, color: colors.ink, lineHeight: 1.3 }}>{admin.name}</Typography>

@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import TagBadge from '../atoms/TagBadge';
 import ActionButton from '../atoms/ActionButton';
 import { colors } from '../../utils/theme';
@@ -20,7 +20,7 @@ export default function ContactRow({ item, icon, onEdit, onDelete, canDelete = t
         <ActionButton icon={<EditOutlinedIcon />} onClick={onEdit}>Editar</ActionButton>
         <ActionButton
           danger
-          icon={<DeleteOutlineIcon />}
+          icon={<DeleteOutlinedIcon />}
           onClick={onDelete}
           disabled={!canDelete}
           title={canDelete ? undefined : 'Debes mantener al menos uno'}

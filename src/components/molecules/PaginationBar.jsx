@@ -11,7 +11,7 @@ const btn = {
 
 const n = (v) => v.toLocaleString('en-US');
 
-export default function PaginationBar({ page, pageSize, total, onChange, itemLabel = 'usuarios', sx }) {
+export default function PaginationBar({ page, pageSize, total, onChange, itemLabel = 'usuarios', summary, arrows = false, sx }) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);
@@ -19,10 +19,10 @@ export default function PaginationBar({ page, pageSize, total, onChange, itemLab
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 2.5, ...sx }}>
       <Typography sx={{ fontSize: 13, color: '#4B5563' }}>
-        Mostrando <b>{from}-{to}</b> de <b>{n(total)}</b> {itemLabel}
+        {summary ?? <>Mostrando <b>{from}-{to}</b> de <b>{n(total)}</b> {itemLabel}</>}
       </Typography>
       <Box component="nav" aria-label="Paginación" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Button sx={btn} disabled={page <= 1} onClick={() => onChange(page - 1)}>Anterior</Button>
+        <Button sx={btn} disabled={page <= 1} onClick={() => onChange(page - 1)}>{arrows ? '← Anterior' : 'Anterior'}</Button>
         {getPageItems(page, totalPages).map((item, i) =>
           item === 'gap' ? (
             <Typography key={`gap-${i}`} aria-hidden sx={{ px: 0.5, color: '#9CA3AF' }}>…</Typography>
@@ -40,7 +40,7 @@ export default function PaginationBar({ page, pageSize, total, onChange, itemLab
             </Button>
           ),
         )}
-        <Button sx={btn} disabled={page >= totalPages} onClick={() => onChange(page + 1)}>Siguiente</Button>
+        <Button sx={btn} disabled={page >= totalPages} onClick={() => onChange(page + 1)}>{arrows ? 'Siguiente →' : 'Siguiente'}</Button>
       </Box>
     </Box>
   );

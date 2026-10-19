@@ -22,3 +22,15 @@ export function formatDateRange(from, to) {
   const year = a.getFullYear() === b.getFullYear() ? '' : ` ${a.getFullYear()}`;
   return `${a.getDate()} de ${MONTHS[a.getMonth()]}${year} - ${b.getDate()} de ${MONTHS[b.getMonth()]}, ${b.getFullYear()}`;
 }
+
+const SHORT = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+const two = (n) => String(n).padStart(2, '0');
+
+/** '21 Sep 2026' */
+export const formatShortDate = (d) => { const x = new Date(d); return `${x.getDate()} ${SHORT[x.getMonth()]} ${x.getFullYear()}`; };
+
+/** '21 de Septiembre, 2026' */
+export const formatLongDate = (d) => { const x = new Date(d); return `${x.getDate()} de ${MONTHS[x.getMonth()]}, ${x.getFullYear()}`; };
+
+/** '21 Sep 10:30' */
+export const formatShortDateTime = (d) => { const x = new Date(d); return `${x.getDate()} ${SHORT[x.getMonth()]} ${two(x.getHours())}:${two(x.getMinutes())}`; };

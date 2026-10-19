@@ -14,7 +14,7 @@ export default function SidebarNav({ items, variant = 'tint' }) {
   return (
     <Box sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: { xs: 'row', md: 'column' }, gap: 1 }} component="ul">
       {items.map(({ label, to, icon }) => {
-        const active = pathname === to || (outlined && pathname.startsWith(`${to}/`));
+        const active = pathname === to || pathname.startsWith(`${to}/`); // también activo en subpáginas (p. ej. /pedidos/:id)
         return (
           <li key={to}>
             <Box

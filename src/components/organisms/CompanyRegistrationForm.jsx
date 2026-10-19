@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import AppLink from '../atoms/AppLink';
-import MailOutlineIcon from '@mui/icons-material/MailOutlined';
+import MailOutlinedIcon from '@mui/icons-material/MailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import FormField from '../molecules/FormField';
 import ItemListInput from '../molecules/ItemListInput';
@@ -118,7 +118,7 @@ export default function CompanyRegistrationForm({
           items={values.emails}
           onChange={(v) => setField('emails', v)}
           placeholder="nuevo.correo@ejemplo.cl"
-          icon={<MailOutlineIcon fontSize="small" />}
+          icon={<MailOutlinedIcon fontSize="small" />}
           validate={isValidEmail}
           errorMessage="Ingresa un correo válido"
           markFirstAsPrimary

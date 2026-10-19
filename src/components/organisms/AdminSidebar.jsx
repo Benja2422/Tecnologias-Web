@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutlined';
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SidebarNav from '../molecules/SidebarNav';
@@ -10,7 +10,7 @@ import { colors } from '../../utils/theme';
 
 // Dashboard se agregará más adelante
 const ITEMS = [
-  { label: 'Usuarios', to: '/admin/usuarios', icon: <PeopleOutlineIcon /> },
+  { label: 'Usuarios', to: '/admin/usuarios', icon: <PeopleOutlinedIcon /> },
   { label: 'Categorías', to: '/admin/categorias', icon: <Inventory2OutlinedIcon /> },
 ];
 

@@ -4,6 +4,7 @@ import { useAddresses } from './AddressesContext';
 import { addBusinessDays } from '../utils/dates';
 import { calcTotals, getShippingMethod, needsShipping } from '../utils/cart';
 import { getPrincipalPhone, mockProfile } from '../utils/mockProfile';
+import { seedOrder } from '../utils/mockOrders';
 
 const ORDERS_KEY = 'todomart.orders';
 const FIRST_ORDER_NUMBER = 848;
@@ -28,7 +29,9 @@ export function CheckoutProvider({ children }) {
   const { items, removeSeller } = useCart();
   const { addresses } = useAddresses();
   const [draft, setDraft] = useState(null); // { sellerId, addressId, shippingId }
-  const [orders, setOrders] = useState(loadOrders);
+  const [placed, setPlaced] = useState(loadOrders); // pedidos hechos en esta app (el de ejemplo se suma aparte)
+  // Más reciente primero
+  const orders = useMemo(() => [...placed].reverse().concat(seedOrder), [placed]);
 
   const startDraft = useCallback((sellerId) => {
     const principal = addresses.find((a) => a.isPrincipal) ?? addresses[0];
@@ -50,12 +53,15 @@ export function CheckoutProvider({ children }) {
     const method = shippable ? getShippingMethod(draft.shippingId) : null;
     const address = addresses.find((a) => a.id === draft.addressId) ?? null;
     const now = new Date();
-    const number = FIRST_ORDER_NUMBER + orders.length;
+    const number = FIRST_ORDER_NUMBER + placed.length;
 
     const order = {
       id: `TM-${now.getFullYear()}-${String(number).padStart(5, '0')}`,
       createdAt: now.toISOString(),
-      status: 'pendiente',
+      status: 'activo',
+      timeline: { confirmado: now.toISOString() }, // los demás hitos los completa el vendedor
+      carrier: null,
+      tracking: null,
       seller: lines[0].seller,
       recipient: mockProfile.fullName,
       phone: getPrincipalPhone(),
@@ -70,7 +76,7 @@ export function CheckoutProvider({ children }) {
     };
 
     // TODO: enviar a src/services
-    setOrders((prev) => {
+    setPlaced((prev) => {
       const next = [...prev, order];
       try { window.localStorage.setItem(ORDERS_KEY, JSON.stringify(next)); } catch { /* ignorar */ }
       return next;
@@ -78,7 +84,7 @@ export function CheckoutProvider({ children }) {
     removeSeller(draft.sellerId);
     setDraft(null);
     return order;
-  }, [draft, items, addresses, orders.length, removeSeller]);
+  }, [draft, items, addresses, placed.length, removeSeller]);
 
   const getOrder = useCallback((id) => orders.find((o) => o.id === id) ?? null, [orders]);
 
