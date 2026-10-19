@@ -74,7 +74,8 @@ export default function UserMenu({ user, onLogout }) {
         onClose={close}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{ list: { 'aria-labelledby': 'user-menu-button', disablePadding: true } }}
+        // Sin padding arriba (el encabezado va pegado al borde) y 8px abajo, bajo "Cerrar sesión"
+        slotProps={{ list: { 'aria-labelledby': 'user-menu-button', disablePadding: true, sx: { pb: 1 } } }}
         sx={{
           mt: 1,
           '& .MuiPaper-root': {
