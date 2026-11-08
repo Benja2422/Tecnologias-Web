@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Link as RouterLink, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 import AccountLayout from '../components/templates/AccountLayout';
 import OrderStatusBadge from '../components/atoms/OrderStatusBadge';
 import OrderTimeline from '../components/molecules/OrderTimeline';
+import ReviewDialog from '../components/organisms/ReviewDialog';
 import { useCheckout } from '../contexts/CheckoutContext';
+import { useReviews } from '../contexts/ReviewsContext';
 import { getOrderStatus } from '../utils/orders';
 import { formatLongDate } from '../utils/dates';
 import { formatPrice } from '../utils/format';
@@ -33,10 +35,12 @@ const linkSx = { p: 0, minWidth: 0, fontFamily: 'inherit', fontSize: 15, fontWei
 
 /** Detalle de un pedido: seguimiento, datos de entrega, productos y totales. */
 export default function OrderDetailPage() {
-  const navigate = useNavigate();
   const { orderId } = useParams();
   const { getOrder } = useCheckout();
+  const { publishReview, hasReview } = useReviews();
   const [toast, setToast] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
+  const [reviewing, setReviewing] = useState(null); // producto del pedido abierto en el modal de reseña
   const order = getOrder(orderId);
   if (!order) return <Navigate to="/pedidos" replace />;
 
@@ -45,14 +49,21 @@ export default function OrderDetailPage() {
   const delivered = status === 'Entregado';
   const cancelled = status === 'Cancelado';
 
+  const reviewId = (item) => `${order.id}:${item.productId}`;
   const rate = (item) => {
     console.log('[Pedidos] Calificar:', { orderId: order.id, productId: item.productId, kind: item.kind });
-    if (item.kind === 'producto') navigate(`/producto/${item.productId}`);
-    else setToast('La calificación de servicios estará disponible pronto');
+    setReviewing({ id: reviewId(item), kind: item.kind, name: item.name, seller: seller.name, image: item.image, purchasedAt: order.createdAt });
   };
+  const submitReview = ({ rating, comment }) => {
+    console.log('[Reseñas] Publicar reseña:', { id: reviewing.id, producto: reviewing.name, rating, comment });
+    publishReview(reviewing, { rating, comment });
+    setReviewing(null);
+    notify('¡Gracias! Tu reseña fue publicada.', 'success');
+  };
+  const notify = (message, severity = 'info') => { setToastSeverity(severity); setToast(message); };
   const help = (action) => {
     console.log(`[Pedidos] ${action}:`, { orderId: order.id, sellerId: seller.id });
-    setToast(`${action}: función disponible pronto`);
+    notify(`${action}: función disponible pronto`);
   };
 
   const addressText = address && `${address.street} ${address.number}, ${address.commune}, ${address.province}`;
@@ -116,7 +127,10 @@ export default function OrderDetailPage() {
                 <Typography sx={{ fontSize: 18, fontWeight: 700, color: colors.text }}>{formatPrice(it.subtotal)}</Typography>
                 <Typography sx={{ fontSize: 13, color: colors.muted }}>{formatPrice(it.unitPrice)} / unidad</Typography>
               </Box>
-              {delivered && (
+              {delivered && hasReview(reviewId(it)) && (
+                <Typography sx={{ minWidth: 96, textAlign: 'center', fontSize: 14, fontWeight: 600, color: colors.muted }}>Reseña publicada</Typography>
+              )}
+              {delivered && !hasReview(reviewId(it)) && (
                 <Button
                   variant="outlined"
                   onClick={() => rate(it)}
@@ -153,8 +167,10 @@ export default function OrderDetailPage() {
         </Box>
       </Box>
 
+      {reviewing && <ReviewDialog key={reviewing.id} item={reviewing} onSubmit={submitReview} onClose={() => setReviewing(null)} />}
+
       <Snackbar open={Boolean(toast)} autoHideDuration={3000} onClose={() => setToast('')} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="info" variant="filled" onClose={() => setToast('')} sx={{ width: '100%' }}>{toast}</Alert>
+        <Alert severity={toastSeverity} variant="filled" onClose={() => setToast('')} sx={{ width: '100%' }}>{toast}</Alert>
       </Snackbar>
     </AccountLayout>
   );

@@ -8,8 +8,9 @@ import { colors } from '../../utils/theme';
  * - outlined: estrellas con contorno (como en la ficha de producto)
  * - size: tamaño de las estrellas en px
  * - color: color de las estrellas llenas (por defecto dorado)
+ * - showValue: false oculta la nota numérica "(4.0)"
  */
-export default function RatingStars({ value, reviewCount, outlined = false, size = 16, color = '#F5A524' }) {
+export default function RatingStars({ value, reviewCount, outlined = false, size = 16, color = '#F5A524', showValue = true }) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
       <Rating
@@ -24,7 +25,7 @@ export default function RatingStars({ value, reviewCount, outlined = false, size
         sx={{ color, fontSize: size, ...(outlined && { '& .MuiRating-iconEmpty': { color: '#D4D4D8' } }) }}
         aria-label={`Calificación ${value} de 5`}
       />
-      <Typography sx={{ fontSize: 13, color: colors.muted }}>({value.toFixed(1)})</Typography>
+      {showValue && <Typography sx={{ fontSize: 13, color: colors.muted }}>({value.toFixed(1)})</Typography>}
       {reviewCount !== undefined && (
         <Typography sx={{ fontSize: 13, color: '#9A9A9A' }}>
           • {reviewCount} {reviewCount === 1 ? 'reseña' : 'reseñas'}

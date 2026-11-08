@@ -32,5 +32,10 @@ export const formatShortDate = (d) => { const x = new Date(d); return `${x.getDa
 /** '21 de Septiembre, 2026' */
 export const formatLongDate = (d) => { const x = new Date(d); return `${x.getDate()} de ${MONTHS[x.getMonth()]}, ${x.getFullYear()}`; };
 
+const ABBR = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
+
+/** '14 sep. 2026' (día con dos dígitos, como en "Comprado el 08 sep. 2026") */
+export const formatPurchaseDate = (d) => { const x = new Date(d); return `${two(x.getDate())} ${ABBR[x.getMonth()]} ${x.getFullYear()}`; };
+
 /** '21 Sep 10:30' */
 export const formatShortDateTime = (d) => { const x = new Date(d); return `${x.getDate()} ${SHORT[x.getMonth()]} ${two(x.getHours())}:${two(x.getMinutes())}`; };

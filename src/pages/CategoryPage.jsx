@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link as RouterLink, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import MainLayout from '../components/templates/MainLayout';
@@ -8,6 +8,7 @@ import PrimaryButton from '../components/atoms/PrimaryButton';
 import CategorySidebar from '../components/organisms/CategorySidebar';
 import CategoryListing from '../components/organisms/CategoryListing';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import { toCartLine } from '../utils/cart';
 import { currentUser } from '../utils/mockCatalog';
 import { categoryTrees, getCategory, getCategoryPath, getCategoryType, getFirstCategoryId } from '../utils/mockCategories';
@@ -42,7 +43,7 @@ export default function CategoryPage() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const { addItem } = useCart();
-  const [favoriteIds, setFavoriteIds] = useState(() => new Set());
+  const { ids: favoriteIds, toggle } = useWishlist();
 
   const category = getCategory(categoryId);
   const type = getCategoryType(categoryId) ?? 'productos'; // 'productos' | 'servicios' según el árbol de la categoría
@@ -85,13 +86,9 @@ export default function CategoryPage() {
   const getHref = (id) => `/categorias/${id}`;
 
   const toggleFavorite = (item) => {
-    const adding = !favoriteIds.has(item.id);
-    console.log(`[Lista de deseos] ${adding ? 'Añadir' : 'Quitar'}:`, { id: item.id, name: item.name, tipo: type });
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      adding ? next.add(item.id) : next.delete(item.id);
-      return next;
-    });
+    const kind = type === 'servicios' ? 'servicio' : 'producto';
+    const adding = toggle(item, kind);
+    console.log(`[Lista de deseos] ${adding ? 'Añadir' : 'Quitar'}:`, { id: item.id, name: item.name, tipo: kind });
   };
 
   // TODO: conectar con src/services (carrito y solicitudes de servicio)

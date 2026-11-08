@@ -1,21 +1,20 @@
-import { useState } from 'react';
 import MainLayout from '../components/templates/MainLayout';
 import HeroBanner from '../components/organisms/HeroBanner';
 import ItemSection from '../components/organisms/ItemSection';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import { toCartLine } from '../utils/cart';
 import { currentUser, featuredProducts, featuredServices } from '../utils/mockCatalog';
 
 export default function CatalogPage() {
   const { addItem } = useCart();
-  const [favoriteIds, setFavoriteIds] = useState(() => new Set());
+  const { ids: favoriteIds, toggle } = useWishlist();
 
-  const toggleFavorite = ({ id }) =>
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  const toggleFavorite = (item) => {
+    const kind = featuredServices.some((s) => s.id === item.id) ? 'servicio' : 'producto';
+    const adding = toggle(item, kind);
+    console.log(`[Lista de deseos] ${adding ? 'Añadir' : 'Quitar'}:`, { id: item.id, name: item.name, tipo: kind });
+  };
 
   // TODO: conectar con src/services (carrito, solicitudes, búsqueda, sesión)
   const addToCart = (item) => {

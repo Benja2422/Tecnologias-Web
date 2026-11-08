@@ -10,6 +10,7 @@ import ProductPurchasePanel from '../components/organisms/ProductPurchasePanel';
 import ProductTabsSection from '../components/organisms/ProductTabsSection';
 import RelatedProductsSection from '../components/organisms/RelatedProductsSection';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import { toCartLine } from '../utils/cart';
 import { currentUser } from '../utils/mockCatalog';
 import { getProductById, getProductCategories, getRatingInfo, getRelatedProducts } from '../utils/mockProducts';
@@ -37,8 +38,9 @@ function ProductDetail({ product }) {
     () => product.images.find((i) => i.variantId === firstAvailable?.id)?.id ?? product.images[0]?.id ?? null,
   );
   const [quantity, setQuantity] = useState(1);
-  const [wishlisted, setWishlisted] = useState(false);
   const { addItem } = useCart();
+  const { has, toggle } = useWishlist();
+  const wishlisted = has(product.id);
   const [questions, setQuestions] = useState(product.questions ?? []);
   const [toast, setToast] = useState('');
 
@@ -83,9 +85,8 @@ function ProductDetail({ product }) {
   };
 
   const toggleWishlist = () => {
-    const next = !wishlisted;
+    const next = toggle({ ...product, image: galleryImages[0]?.src, price: product.price }, 'producto');
     console.log(`[Lista de deseos] ${next ? 'Añadir' : 'Quitar'}:`, { productId: product.id, name: product.name });
-    setWishlisted(next);
     setToast(next ? 'Añadido a tu lista de deseos' : 'Quitado de tu lista de deseos');
   };
 

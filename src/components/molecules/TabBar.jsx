@@ -13,7 +13,11 @@ export default function TabBar({ tabs, value, onChange, label = 'Información de
   };
 
   return (
-    <Box role="tablist" aria-label={label} onKeyDown={onKeyDown} sx={{ display: 'flex', gap: { xs: 3, md: 5 }, borderBottom: '1px solid #E5E5E5', overflowX: 'auto' }}>
+    <Box role="tablist" aria-label={label} onKeyDown={onKeyDown} sx={{
+        display: 'flex', gap: { xs: 3, md: 5 }, boxShadow: 'inset 0 -1px 0 #E5E5E5',
+        // En pantallas muy angostas las pestañas se desplazan, pero sin mostrar barras de scroll
+        overflowX: 'auto', overflowY: 'hidden', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' },
+      }}>
       {tabs.map((tab) => {
         const selected = tab.id === value;
         return (
@@ -26,7 +30,7 @@ export default function TabBar({ tabs, value, onChange, label = 'Información de
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(tab.id)}
             sx={{
-              py: 1.75, mb: '-1px', fontFamily: 'inherit', fontSize: 16, whiteSpace: 'nowrap',
+              py: 1.75, fontFamily: 'inherit', fontSize: 16, whiteSpace: 'nowrap',
               fontWeight: selected ? 600 : 400, color: selected ? colors.primary : colors.muted,
               borderBottom: `2px solid ${selected ? colors.primary : 'transparent'}`,
               '&:hover': { color: selected ? colors.primary : colors.text },

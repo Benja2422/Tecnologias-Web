@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import SearchOffOutlinedIcon from '@mui/icons-material/SearchOffOutlined';
@@ -10,6 +10,7 @@ import PaginationBar from '../components/molecules/PaginationBar';
 import SearchFilters from '../components/organisms/SearchFilters';
 import ItemGrid from '../components/organisms/ItemGrid';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import { toCartLine } from '../utils/cart';
 import { currentUser } from '../utils/mockCatalog';
 import { searchCatalog } from '../utils/searchCatalog';
@@ -27,7 +28,7 @@ const actionLabelFor = (item) => (item.kind === 'servicio' ? 'Solicitar servicio
 export default function SearchResultsPage() {
   const [params, setParams] = useSearchParams();
   const { addItem } = useCart();
-  const [favoriteIds, setFavoriteIds] = useState(() => new Set());
+  const { ids: favoriteIds, toggle } = useWishlist();
 
   const q = (params.get('q') ?? '').trim();
   const type = TYPE_OPTIONS.some((o) => o.value === params.get('tipo')) ? params.get('tipo') : DEFAULT_TYPE;
@@ -99,13 +100,8 @@ export default function SearchResultsPage() {
   }, { replace: true });
 
   const toggleFavorite = (item) => {
-    const adding = !favoriteIds.has(item.id);
+    const adding = toggle(item);
     console.log(`[Lista de deseos] ${adding ? 'Añadir' : 'Quitar'}:`, { id: item.id, name: item.name, tipo: item.kind });
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      adding ? next.add(item.id) : next.delete(item.id);
-      return next;
-    });
   };
 
   // TODO: conectar con src/services (carrito y solicitudes de servicio)
