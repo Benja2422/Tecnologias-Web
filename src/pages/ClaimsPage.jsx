@@ -51,7 +51,7 @@ export default function ClaimsPage() {
   };
 
   return (
-    <AccountLayout maxWidth={1100} showFooter headerProps={{ user: { ...currentUser, name: mockProfile.fullName } }}>
+    <AccountLayout maxWidth={1600} showFooter headerProps={{ user: { ...currentUser, name: mockProfile.fullName } }}>
       <TabBar tabs={TABS} value={tab} onChange={setTab} label="Devoluciones y reembolsos" />
 
       <Box role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} sx={{ mt: 4 }}>

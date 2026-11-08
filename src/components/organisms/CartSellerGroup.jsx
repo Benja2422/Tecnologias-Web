@@ -6,8 +6,11 @@ import CartItemRow from '../molecules/CartItemRow';
 import { colors } from '../../utils/theme';
 import { formatPrice } from '../../utils/format';
 
-/** Productos de un mismo vendedor + subtotal + botón para continuar la compra con ese vendedor. */
-export default function CartSellerGroup({ seller, items, subtotal, onQuantityChange, onRemove, onContinue }) {
+/**
+ * Productos de un mismo vendedor + subtotal + botón para continuar la compra con ese vendedor.
+ * onRequestQuote: agrega "Solicitar cotización" (solo si el vendedor tiene productos; los servicios no se cotizan).
+ */
+export default function CartSellerGroup({ seller, items, subtotal, onQuantityChange, onRemove, onContinue, onRequestQuote }) {
   return (
     <Box component="section" aria-label={`Productos de ${seller.name}`} sx={{ p: { xs: 2, sm: 2.5 }, border: '1px solid #EEE', borderRadius: 3, bgcolor: '#fff' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 2, borderBottom: '1px solid #EEE' }}>
@@ -48,6 +51,16 @@ export default function CartSellerGroup({ seller, items, subtotal, onQuantityCha
       >
         Continuar compra con {seller.name}
       </Button>
+      {onRequestQuote && items.some((l) => l.kind === 'producto') && (
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={() => onRequestQuote(seller)}
+          sx={{ mt: 1.5, height: 46, borderRadius: '8px', fontFamily: 'inherit', fontSize: 15, fontWeight: 600, textTransform: 'none', color: colors.primary, borderColor: colors.primary, '&:hover': { borderColor: colors.primaryDark, bgcolor: '#FDECEF' } }}
+        >
+          Solicitar cotización
+        </Button>
+      )}
     </Box>
   );
 }

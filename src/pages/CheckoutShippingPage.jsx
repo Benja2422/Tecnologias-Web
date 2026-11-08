@@ -13,30 +13,41 @@ import PrimaryButton from '../components/atoms/PrimaryButton';
 import { useCart } from '../contexts/CartContext';
 import { useAddresses } from '../contexts/AddressesContext';
 import { useCheckout } from '../contexts/CheckoutContext';
+import { useQuotations } from '../contexts/QuotationsContext';
+import QuotationCheckoutSummary from '../components/organisms/QuotationCheckoutSummary';
+import { quotationToLines } from '../utils/quotations';
 import { SHIPPING_METHODS, calcTotals, getShippingMethod, needsShipping } from '../utils/cart';
 import { getPrincipalPhone } from '../utils/mockProfile';
 import { formatPrice } from '../utils/format';
 import { colors } from '../utils/theme';
 
 
-/** Paso 1 del checkout: dirección de despacho y método de envío (se compra de a un vendedor: ?vendedor=<id>). */
+/**
+ * Paso 1 del checkout: dirección de despacho y método de envío.
+ * Se compra de a un vendedor (?vendedor=<id>) o se paga una cotización aceptada (?cotizacion=<COT-…>), con sus precios fijos.
+ */
 export default function CheckoutShippingPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const sellerId = params.get('vendedor');
+  const quotationId = params.get('cotizacion');
+  const { getQuotation } = useQuotations();
+  const quotation = quotationId ? getQuotation(quotationId) : null;
+  const sellerId = quotation ? quotation.seller.id : params.get('vendedor');
   const { items } = useCart();
   const { addresses, saveAddress } = useAddresses();
   const { draft, startDraft, updateDraft } = useCheckout();
   const [dialog, setDialog] = useState(null); // null | { address: Address | null }
   const [error, setError] = useState('');
 
-  const lines = items.filter((l) => l.seller.id === sellerId);
-  const hasDraft = draft?.sellerId === sellerId;
+  const payable = !quotationId || (quotation && quotation.status === 'Aceptada' && !quotation.orderId);
+  const lines = quotationId ? (payable && quotation ? quotationToLines(quotation) : []) : items.filter((l) => l.seller.id === sellerId);
+  const hasDraft = draft?.sellerId === sellerId && (draft.quotationId ?? null) === (quotation?.id ?? null);
 
   useEffect(() => {
-    if (sellerId && lines.length > 0 && !hasDraft) startDraft(sellerId);
-  }, [sellerId, lines.length, hasDraft, startDraft]);
+    if (sellerId && lines.length > 0 && !hasDraft) startDraft(sellerId, quotation?.id ?? null);
+  }, [sellerId, lines.length, hasDraft, startDraft, quotation?.id]);
 
+  if (quotationId && !payable) return <Navigate to={quotation ? `/cotizaciones/${quotation.id}` : '/cotizaciones'} replace />;
   if (!sellerId || lines.length === 0) return <Navigate to="/carrito" replace />;
   if (!hasDraft) return null;
 
@@ -62,11 +73,13 @@ export default function CheckoutShippingPage() {
       return;
     }
     const address = addresses.find((a) => a.id === draft.addressId);
-    console.log('[Checkout] Continuar a pago:', { sellerId, addressId: address.id, shippingId: method ? method.id : null, shipping: method ? method.price : 0, total: totals.total });
-    navigate(`/checkout/pago?vendedor=${sellerId}`);
+    console.log('[Checkout] Continuar a pago:', { sellerId, quotationId: quotation?.id ?? null, addressId: address.id, shippingId: method ? method.id : null, shipping: method ? method.price : 0, total: totals.total });
+    navigate(quotation ? `/checkout/pago?cotizacion=${quotation.id}` : `/checkout/pago?vendedor=${sellerId}`);
   };
 
-  const aside = (
+  const aside = quotation ? (
+    <QuotationCheckoutSummary quotation={quotation} lines={lines} shippingName={method?.name} shippingPrice={method?.price ?? 0} />
+  ) : (
     <CheckoutSummary
       seller={seller}
       lines={lines}
@@ -78,7 +91,7 @@ export default function CheckoutShippingPage() {
   );
 
   return (
-    <CheckoutLayout step={1} aside={aside}>
+    <CheckoutLayout step={1} aside={aside} quotation={quotation}>
       <Box component="section" aria-labelledby="dir-title">
         <Typography id="dir-title" component="h2" sx={{ display: 'flex', alignItems: 'center', gap: 1.25, fontSize: 20, fontWeight: 700, color: colors.text, mb: 2 }}>
           <PlaceOutlinedIcon aria-hidden sx={{ fontSize: 22 }} />

@@ -3,7 +3,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { colors } from '../../utils/theme';
 
 /**
- * items: [{ label, to, icon }] — resalta el activo según la URL.
+ * items: [{ label, to, icon, badge? }] — resalta el activo según la URL. badge: número rojo a la derecha (se oculta si es 0).
  * variant="tint": fondo rosado + borde izquierdo (Mi cuenta)
  * variant="outlined": borde rojo + barra a la derecha (panel admin)
  */
@@ -13,7 +13,7 @@ export default function SidebarNav({ items, variant = 'tint' }) {
 
   return (
     <Box sx={{ listStyle: 'none', m: 0, p: 0, display: 'flex', flexDirection: { xs: 'row', md: 'column' }, gap: 1 }} component="ul">
-      {items.map(({ label, to, icon }) => {
+      {items.map(({ label, to, icon, badge }) => {
         const active = pathname === to || pathname.startsWith(`${to}/`); // también activo en subpáginas (p. ej. /pedidos/:id)
         return (
           <li key={to}>
@@ -40,7 +40,12 @@ export default function SidebarNav({ items, variant = 'tint' }) {
               }}
             >
               {icon}
-              {label}
+              {badge > 0 ? <Box component="span" sx={{ whiteSpace: 'nowrap' }}>{label}</Box> : label}
+              {badge > 0 && (
+                <Box component="span" aria-label={`${badge} pendientes`} sx={{ ml: 'auto', mr: -0.5, minWidth: 20, height: 20, px: 0.75, borderRadius: 999, bgcolor: colors.primary, color: '#fff', fontSize: 11, fontWeight: 700, display: 'grid', placeItems: 'center', lineHeight: 1 }}>
+                  {badge}
+                </Box>
+              )}
             </Box>
           </li>
         );

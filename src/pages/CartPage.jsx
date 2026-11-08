@@ -8,14 +8,18 @@ import PageContainer from '../components/atoms/PageContainer';
 import PrimaryButton from '../components/atoms/PrimaryButton';
 import CartSellerGroup from '../components/organisms/CartSellerGroup';
 import CartSummary from '../components/organisms/CartSummary';
+import QuotationRequestDialog from '../components/organisms/QuotationRequestDialog';
 import { useCart } from '../contexts/CartContext';
+import { useQuotations } from '../contexts/QuotationsContext';
 import { currentUser } from '../utils/mockCatalog';
 import { colors } from '../utils/theme';
 
 export default function CartPage() {
   const navigate = useNavigate();
   const { items, count, total, groups, setQuantity, removeItem } = useCart();
+  const { requestQuotation } = useQuotations();
   const [toast, setToast] = useState('');
+  const [quotingSeller, setQuotingSeller] = useState(null); // vendedor cuyo modal "Solicitar cotización" está abierto
 
   const changeQuantity = (line, quantity) => {
     console.log('[Carrito] Cambiar cantidad:', { lineId: line.lineId, name: line.name, quantity });
@@ -33,6 +37,17 @@ export default function CartPage() {
     const group = groups.find((g) => g.seller.id === seller.id);
     console.log('[Carrito] Continuar compra:', { sellerId: seller.id, seller: seller.name, items: group.items.map((l) => ({ productId: l.productId, quantity: l.quantity })), subtotal: group.subtotal });
     navigate(`/checkout/despacho?vendedor=${seller.id}`);
+  };
+
+  // Se cotiza de a un vendedor y solo productos (los servicios no se cotizan)
+  const quoteGroup = quotingSeller ? groups.find((g) => g.seller.id === quotingSeller) : null;
+  const quoteLines = quoteGroup ? quoteGroup.items.filter((l) => l.kind === 'producto') : [];
+
+  const sendQuotation = ({ items: quoteItems, message }) => {
+    const created = requestQuotation({ seller: quoteGroup.seller, items: quoteItems, message });
+    console.log('[Cotizaciones] Solicitar cotización:', { quotationId: created?.id, sellerId: quoteGroup.seller.id, items: quoteItems.map((l) => ({ productId: l.productId, quantity: l.quantity })), message });
+    setQuotingSeller(null);
+    if (created) navigate(`/cotizaciones/${created.id}`);
   };
 
   return (
@@ -75,6 +90,7 @@ export default function CartPage() {
                     onQuantityChange={changeQuantity}
                     onRemove={remove}
                     onContinue={continueWith}
+                    onRequestQuote={(seller) => setQuotingSeller(seller.id)}
                   />
                 ))}
               </Box>
@@ -83,6 +99,15 @@ export default function CartPage() {
           </>
         )}
       </PageContainer>
+
+      {quoteGroup && quoteLines.length > 0 && (
+        <QuotationRequestDialog
+          seller={quoteGroup.seller}
+          lines={quoteLines.map((l) => ({ productId: l.productId, name: l.name, detail: l.detail, image: l.image, quantity: l.quantity, unitPrice: l.unitPrice, listPrice: l.listPrice ?? null, stock: l.maxQuantity }))}
+          onSubmit={sendQuotation}
+          onClose={() => setQuotingSeller(null)}
+        />
+      )}
 
       <Snackbar open={Boolean(toast)} autoHideDuration={3000} onClose={() => setToast('')} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" variant="filled" onClose={() => setToast('')} sx={{ width: '100%' }}>{toast}</Alert>

@@ -79,7 +79,12 @@ export default function OrderDetailPage() {
         <Typography component="h1" sx={{ fontSize: { xs: 26, md: 36 }, fontWeight: 600, color: colors.text, overflowWrap: 'anywhere' }}>Pedido #{order.id}</Typography>
         <OrderStatusBadge status={status} size="large" />
       </Box>
-      <Typography sx={{ mt: 1.5, fontSize: 16, color: colors.muted }}>Realizado el {formatLongDate(order.createdAt)}</Typography>
+      <Typography sx={{ mt: 1.5, fontSize: 16, color: colors.muted }}>
+        Realizado el {formatLongDate(order.createdAt)}
+        {order.quotationId && (
+          <> · Cotización <Box component={RouterLink} to={`/cotizaciones/${order.quotationId}`} sx={{ color: colors.primary, fontWeight: 600, textDecoration: 'underline' }}>{order.quotationId}</Box></>
+        )}
+      </Typography>
 
       <Box component="section" aria-labelledby="seguimiento" sx={{ ...card, mt: 4 }}>
         <Typography id="seguimiento" component="h2" sx={{ ...h2, mb: 2 }}>Seguimiento del pedido</Typography>

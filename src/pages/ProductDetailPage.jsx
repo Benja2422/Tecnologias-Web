@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Snackbar, Typography } from '@mui/material';
 import MainLayout from '../components/templates/MainLayout';
 import PageContainer from '../components/atoms/PageContainer';
@@ -9,9 +9,11 @@ import ProductGallery from '../components/molecules/ProductGallery';
 import ProductPurchasePanel from '../components/organisms/ProductPurchasePanel';
 import ProductTabsSection from '../components/organisms/ProductTabsSection';
 import RelatedProductsSection from '../components/organisms/RelatedProductsSection';
+import QuotationRequestDialog from '../components/organisms/QuotationRequestDialog';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { toCartLine } from '../utils/cart';
+import { useQuotations } from '../contexts/QuotationsContext';
+import { DEFAULT_SELLER, toCartLine } from '../utils/cart';
 import { currentUser } from '../utils/mockCatalog';
 import { getProductById, getProductCategories, getRatingInfo, getRelatedProducts } from '../utils/mockProducts';
 import { colors } from '../utils/theme';
@@ -38,8 +40,11 @@ function ProductDetail({ product }) {
     () => product.images.find((i) => i.variantId === firstAvailable?.id)?.id ?? product.images[0]?.id ?? null,
   );
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
   const { addItem } = useCart();
+  const { requestQuotation } = useQuotations();
   const { has, toggle } = useWishlist();
+  const [quoting, setQuoting] = useState(null); // línea a cotizar mientras el modal está abierto
   const wishlisted = has(product.id);
   const [questions, setQuestions] = useState(product.questions ?? []);
   const [toast, setToast] = useState('');
@@ -82,6 +87,18 @@ function ProductDetail({ product }) {
     console.log('[Carrito] Añadir producto:', line);
     addItem(toCartLine(item, { quantity: qty, variant: chosenVariant, image: item === product ? galleryImages[0]?.src : undefined }));
     setToast(`${qty > 1 ? `${qty} unidades de ` : ''}${item.name} añadido al carrito`);
+  };
+
+  // Cotiza solo este producto (con el color y la cantidad elegidos); los servicios no se cotizan
+  const openQuote = () => {
+    const line = toCartLine(product, { quantity, variant, image: galleryImages[0]?.src });
+    setQuoting({ productId: line.productId, name: line.name, detail: line.detail, image: line.image, quantity: line.quantity, unitPrice: line.unitPrice, listPrice: line.listPrice, stock: line.maxQuantity });
+  };
+  const sendQuote = ({ items, message }) => {
+    const created = requestQuotation({ seller: product.seller ?? DEFAULT_SELLER, items, message });
+    console.log('[Cotizaciones] Solicitar cotización:', { quotationId: created?.id, productId: product.id, items: items.map((l) => ({ productId: l.productId, quantity: l.quantity })), message });
+    setQuoting(null);
+    if (created) navigate(`/cotizaciones/${created.id}`);
   };
 
   const toggleWishlist = () => {
@@ -127,6 +144,7 @@ function ProductDetail({ product }) {
             isWishlisted={wishlisted}
             onToggleWishlist={toggleWishlist}
             onAddToCart={() => addToCart()}
+            onRequestQuote={product.kind === 'servicio' ? undefined : openQuote}
             onOpenSeller={(seller) => console.log('[Producto] Ver vendedor:', seller)}
           />
         </Box>
@@ -148,6 +166,8 @@ function ProductDetail({ product }) {
           />
         </Box>
       </PageContainer>
+
+      {quoting && <QuotationRequestDialog seller={product.seller ?? DEFAULT_SELLER} lines={[quoting]} onSubmit={sendQuote} onClose={() => setQuoting(null)} />}
 
       <Snackbar open={Boolean(toast)} autoHideDuration={3000} onClose={() => setToast('')} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert severity="success" variant="filled" onClose={() => setToast('')} sx={{ width: '100%' }}>{toast}</Alert>

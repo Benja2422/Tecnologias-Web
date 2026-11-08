@@ -25,6 +25,7 @@ export function toCartLine(item, { quantity = 1, variant = null, image } = {}) {
     image: image ?? item.image ?? item.images?.[0]?.src ?? null,
     detail: variant ? `Color: ${variant.label}` : (item.detail ?? ''),
     unitPrice: item.price,
+    listPrice: item.originalPrice ?? null, // precio de lista (tachado) si el producto está con descuento
     quantity,
     maxQuantity: variant ? variant.stock : (item.stock ?? 99),
     seller: item.seller ?? DEFAULT_SELLER,

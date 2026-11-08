@@ -15,7 +15,7 @@ const labelSx = { fontSize: 16, fontWeight: 600, color: colors.ink };
 /** Columna derecha de la ficha: título, precio, variantes, cantidad y acciones. */
 export default function ProductPurchasePanel({
   product, rating, reviewCount, variantId, onVariantChange, quantity, onQuantityChange, stock,
-  isWishlisted, onToggleWishlist, onAddToCart, onOpenSeller,
+  isWishlisted, onToggleWishlist, onAddToCart, onRequestQuote, onOpenSeller,
 }) {
   const { name, ageRestricted, price, originalPrice, variants, freeShipping, seller } = product;
   const available = stock > 0;
@@ -52,6 +52,17 @@ export default function ProductPurchasePanel({
         <PrimaryButton disabled={!available} onClick={onAddToCart} sx={{ height: 56, py: 0, fontSize: 17, fontWeight: 700 }}>
           {available ? 'Añadir al carrito' : 'Sin stock'}
         </PrimaryButton>
+        {onRequestQuote && (
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={onRequestQuote}
+            disabled={!available}
+            sx={{ height: 52, borderRadius: 999, fontFamily: 'inherit', fontSize: 16, fontWeight: 600, textTransform: 'none', color: colors.primary, borderColor: colors.primary, '&:hover': { borderColor: colors.primaryDark, bgcolor: '#FDECEF' } }}
+          >
+            Solicitar cotización
+          </Button>
+        )}
         <Button
           fullWidth
           variant="outlined"

@@ -7,7 +7,7 @@ export const MAX_MESSAGE_LENGTH = 1000;
 // Sin proveedor, el contexto responde vacío (así los componentes no fallan en pruebas aisladas)
 const MessagesContext = createContext({
   conversations: [], unreadCount: 0, getConversation: () => null,
-  sendMessage: () => null, markRead: () => {},
+  sendMessage: () => null, markRead: () => {}, startConversation: () => null,
 });
 
 const load = () => {
@@ -47,9 +47,16 @@ export function MessagesProvider({ children }) {
 
   const markRead = useCallback((id) => update(id, (c) => (c.unread ? { ...c, unread: false } : c)), [update]);
 
+  /** Abre (o crea, si no existe) la conversación con un contacto { id, name, role } y devuelve su id. */
+  const startConversation = useCallback(({ id, name, role = 'Empresa' }) => {
+    const initials = name.split(/\s+/).filter((w) => /^[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+    setRaw((prev) => (prev.some((c) => c.id === id) ? prev : [{ id, name, initials, role, unread: false, messages: [] }, ...prev]));
+    return id;
+  }, []);
+
   const value = useMemo(
-    () => ({ conversations, unreadCount, getConversation, sendMessage, markRead }),
-    [conversations, unreadCount, getConversation, sendMessage, markRead],
+    () => ({ conversations, unreadCount, getConversation, sendMessage, markRead, startConversation }),
+    [conversations, unreadCount, getConversation, sendMessage, markRead, startConversation],
   );
   return <MessagesContext.Provider value={value}>{children}</MessagesContext.Provider>;
 }

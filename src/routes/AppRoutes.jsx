@@ -10,6 +10,9 @@ import OrderConfirmationPage from '../pages/OrderConfirmationPage';
 import ReviewsPage from '../pages/ReviewsPage';
 import WishlistPage from '../pages/WishlistPage';
 import MessagesPage from '../pages/MessagesPage';
+import QuotationsPage from '../pages/QuotationsPage';
+import QuotationDetailPage from '../pages/QuotationDetailPage';
+import QuotationDocumentPage from '../pages/QuotationDocumentPage';
 import OrdersPage from '../pages/OrdersPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
 import ClaimsPage from '../pages/ClaimsPage';
@@ -43,6 +46,9 @@ export default function AppRoutes() {
       <Route path="/lista-deseos" element={<WishlistPage />} />
       <Route path="/mensajes" element={<MessagesPage />} />
       <Route path="/mensajes/:conversationId" element={<MessagesPage />} />
+      <Route path="/cotizaciones" element={<QuotationsPage />} />
+      <Route path="/cotizaciones/:quotationId" element={<QuotationDetailPage />} />
+      <Route path="/cotizaciones/:quotationId/documento" element={<QuotationDocumentPage />} />
       <Route path="/pedidos" element={<OrdersPage />} />
       <Route path="/pedidos/:orderId" element={<OrderDetailPage />} />
       <Route path="/devoluciones" element={<ClaimsPage />} />

@@ -10,6 +10,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ReplayIcon from '@mui/icons-material/Replay';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SidebarNav from '../molecules/SidebarNav';
+import { useQuotations } from '../../contexts/QuotationsContext';
 import { colors } from '../../utils/theme';
 
 const ITEMS = [
@@ -25,6 +26,8 @@ const ITEMS = [
 
 export default function AccountSidebar({ onLogout }) {
   const navigate = useNavigate();
+  const { pendingDecisionCount } = useQuotations(); // cotizaciones respondidas que esperan tu decisión
+  const items = ITEMS.map((item) => (item.to === '/cotizaciones' ? { ...item, badge: pendingDecisionCount } : item));
   const logout = () => {
     // TODO: limpiar la sesión (src/contexts) antes de redirigir
     onLogout?.();
@@ -41,7 +44,7 @@ export default function AccountSidebar({ onLogout }) {
         overflowX: { xs: 'auto', md: 'visible' },
       }}
     >
-      <nav aria-label="Mi cuenta"><SidebarNav items={ITEMS} /></nav>
+      <nav aria-label="Mi cuenta"><SidebarNav items={items} /></nav>
       <Divider sx={{ my: 3, mx: { md: 0 }, display: { xs: 'none', md: 'block' } }} />
       <Button
         onClick={logout}
