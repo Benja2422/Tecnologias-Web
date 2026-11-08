@@ -12,6 +12,8 @@ import WishlistPage from '../pages/WishlistPage';
 import MessagesPage from '../pages/MessagesPage';
 import OrdersPage from '../pages/OrdersPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
+import ClaimsPage from '../pages/ClaimsPage';
+import ClaimDetailPage from '../pages/ClaimDetailPage';
 import CartPage from '../pages/CartPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
 import ProfilePage from '../pages/ProfilePage';
@@ -43,6 +45,8 @@ export default function AppRoutes() {
       <Route path="/mensajes/:conversationId" element={<MessagesPage />} />
       <Route path="/pedidos" element={<OrdersPage />} />
       <Route path="/pedidos/:orderId" element={<OrderDetailPage />} />
+      <Route path="/devoluciones" element={<ClaimsPage />} />
+      <Route path="/devoluciones/:claimId" element={<ClaimDetailPage />} />
       <Route path="/admin" element={<Navigate to="/admin/usuarios" replace />} />
       <Route path="/admin/usuarios" element={<AdminUsersPage />} />
       <Route path="*" element={<NotFoundPage />} />
