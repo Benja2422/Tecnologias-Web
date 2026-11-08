@@ -7,6 +7,7 @@ import SearchResultsPage from '../pages/SearchResultsPage';
 import CheckoutShippingPage from '../pages/CheckoutShippingPage';
 import CheckoutPaymentPage from '../pages/CheckoutPaymentPage';
 import OrderConfirmationPage from '../pages/OrderConfirmationPage';
+import MessagesPage from '../pages/MessagesPage';
 import OrdersPage from '../pages/OrdersPage';
 import OrderDetailPage from '../pages/OrderDetailPage';
 import CartPage from '../pages/CartPage';
@@ -34,6 +35,8 @@ export default function AppRoutes() {
       <Route path="/registro" element={<RegisterPage />} />
       <Route path="/perfil" element={<ProfilePage />} />
       <Route path="/direcciones" element={<AddressesPage />} />
+      <Route path="/mensajes" element={<MessagesPage />} />
+      <Route path="/mensajes/:conversationId" element={<MessagesPage />} />
       <Route path="/pedidos" element={<OrdersPage />} />
       <Route path="/pedidos/:orderId" element={<OrderDetailPage />} />
       <Route path="/admin" element={<Navigate to="/admin/usuarios" replace />} />

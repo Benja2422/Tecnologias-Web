@@ -4,7 +4,7 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatBubbleOutlined';
+import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ReplayIcon from '@mui/icons-material/Replay';
