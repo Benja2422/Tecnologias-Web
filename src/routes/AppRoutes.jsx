@@ -22,10 +22,11 @@ import ProductDetailPage from '../pages/ProductDetailPage';
 import ProfilePage from '../pages/ProfilePage';
 import AddressesPage from '../pages/AddressesPage';
 import AdminUsersPage from '../pages/AdminUsersPage';
+import SellerRoutes from './SellerRoutes';
 import NotFoundPage from '../pages/NotFoundPage';
 
 // TODO: proteger /perfil, /direcciones y /admin/* cuando exista la sesión en src/contexts
-// (las rutas /admin/* deben exigir además el rol de administrador)
+// (las rutas /admin/* deben exigir además el rol de administrador, y /emprendedor/* el de emprendedor)
 export default function AppRoutes() {
   return (
     <Routes>
@@ -53,6 +54,8 @@ export default function AppRoutes() {
       <Route path="/pedidos/:orderId" element={<OrderDetailPage />} />
       <Route path="/devoluciones" element={<ClaimsPage />} />
       <Route path="/devoluciones/:claimId" element={<ClaimDetailPage />} />
+      <Route path="/vender" element={<Navigate to="/emprendedor" replace />} />
+      <Route path="/emprendedor/*" element={<SellerRoutes />} />
       <Route path="/admin" element={<Navigate to="/admin/usuarios" replace />} />
       <Route path="/admin/usuarios" element={<AdminUsersPage />} />
       <Route path="*" element={<NotFoundPage />} />
