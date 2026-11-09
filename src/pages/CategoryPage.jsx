@@ -8,10 +8,11 @@ import PrimaryButton from '../components/atoms/PrimaryButton';
 import CategorySidebar from '../components/organisms/CategorySidebar';
 import CategoryListing from '../components/organisms/CategoryListing';
 import { useCart } from '../contexts/CartContext';
+import { useCategories } from '../contexts/CategoriesContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { toCartLine } from '../utils/cart';
 import { currentUser } from '../utils/mockCatalog';
-import { categoryTrees, getCategory, getCategoryPath, getCategoryType, getFirstCategoryId } from '../utils/mockCategories';
+import { getCategory, getCategoryPath, getCategoryType, getFirstCategoryId } from '../utils/mockCategories';
 import { getProductsByCategory } from '../utils/mockProducts';
 import { getServicesByCategory } from '../utils/mockServices';
 import { DEFAULT_SORT, SORT_OPTIONS, sortItems } from '../utils/sortItems';
@@ -31,7 +32,7 @@ function CategoryNotFound() {
         <Typography component="h1" sx={{ fontSize: 28, fontWeight: 700, color: colors.text }}>Categoría no encontrada</Typography>
         <Typography sx={{ mt: 1.5, mb: 4, color: colors.muted }}>Es posible que la categoría ya no exista.</Typography>
         <Box sx={{ maxWidth: 280, mx: 'auto' }}>
-          <PrimaryButton component={RouterLink} to="/categorias/tecnologia">Ver categorías</PrimaryButton>
+          <PrimaryButton component={RouterLink} to="/categorias">Ver categorías</PrimaryButton>
         </Box>
       </PageContainer>
     </MainLayout>
@@ -44,6 +45,7 @@ export default function CategoryPage() {
   const [params, setParams] = useSearchParams();
   const { addItem } = useCart();
   const { ids: favoriteIds, toggle } = useWishlist();
+  const { trees } = useCategories(); // el árbol puede cambiar desde el panel de administración
 
   const category = getCategory(categoryId);
   const type = getCategoryType(categoryId) ?? 'productos'; // 'productos' | 'servicios' según el árbol de la categoría
@@ -116,7 +118,7 @@ export default function CategoryPage() {
       headerProps={{ user: currentUser }}
       sidebar={
         <CategorySidebar
-          categories={categoryTrees[type]}
+          categories={trees[type]}
           activeId={category.id}
           activePathIds={path.map((c) => c.id)}
           type={type}

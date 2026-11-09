@@ -8,7 +8,8 @@ import SelectInput from '../components/atoms/SelectInput';
 import ImageDropzone from '../components/molecules/ImageDropzone';
 import OfferFields from '../components/molecules/OfferFields';
 import { useSeller } from '../contexts/SellerContext';
-import { AGE_RESTRICTIONS, SERVICE_CATEGORIES, SERVICE_MODALITIES, parseAmount } from '../utils/seller';
+import { AGE_RESTRICTIONS, SERVICE_MODALITIES, hasValidCategory, parseAmount } from '../utils/seller';
+import CategorySelect from '../components/molecules/CategorySelect';
 import { formatPrice, formatThousands } from '../utils/format';
 import { btnOutlined, btnPrimary, card } from '../utils/sellerStyles';
 import { colors } from '../utils/theme';
@@ -64,6 +65,7 @@ export default function SellerServiceFormPage() {
     const price = parseAmount(form.price);
     if (!form.name.trim()) e.name = 'Ingresa el nombre del servicio.';
     if (!form.category) e.category = 'Elige una categoría.';
+    else if (!hasValidCategory({ kind: 'servicio', category: form.category })) e.category = 'Esa categoría ya no existe. Elige otra.';
     if (!form.description.trim()) e.description = 'Describe el servicio.';
     if (!Number.isFinite(price) || price <= 0) e.price = 'Ingresa el precio base.';
     if (!form.duration.trim()) e.duration = 'Indica cuánto tiempo toma el servicio.';
@@ -117,7 +119,7 @@ export default function SellerServiceFormPage() {
           </Box>
           <Box>
             <Typography component="label" htmlFor="sf-category" sx={label}>Categoría del Servicio *</Typography>
-            <SelectInput id="sf-category" options={SERVICE_CATEGORIES} value={form.category} onChange={field('category')} placeholder="Selecciona una categoría o subcategoría técnica" ariaLabel="Categoría del servicio" error={errors.category} />
+            <CategorySelect type="servicios" id="sf-category" value={hasValidCategory({ kind: 'servicio', category: form.category }) ? form.category : ''} onChange={field('category')} placeholder="Selecciona una categoría o subcategoría técnica" ariaLabel="Categoría del servicio" error={errors.category} />
           </Box>
           <Box>
             <Typography component="label" htmlFor="sf-description" sx={label}>Descripción del Servicio *</Typography>

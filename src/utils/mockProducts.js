@@ -4,6 +4,7 @@ import { getCategoryPath, getCategoryScopeIds } from './mockCategories';
 import { laptops } from './mockLaptops';
 import { audioProducts } from './mockAudio';
 import { cableImage } from './mockCart';
+import { applyOverride, createdOf, isPublic } from './catalogAdmin';
 import sonyNegro from '../assets/products/sony-wh1000xm5-negro.png';
 import sonyPlata from '../assets/products/sony-wh1000xm5-plata.png';
 import sonyAzul from '../assets/products/sony-wh1000xm5-azul.png';
@@ -80,12 +81,12 @@ const buildSimpleProduct = (item) => ({
   ageRestricted: false,
   price: item.price,
   originalPrice: item.originalPrice,
-  seller: { id: 'techstore', name: 'TechStore' },
+  seller: item.seller ?? { id: 'techstore', name: 'TechStore' },
   freeShipping: true,
   stock: item.stock ?? 25,
   images: item.image ? [{ id: `${item.id}-img`, src: item.image, alt: item.name }] : [],
   imageLabel: item.imageLabel,
-  description: `${item.name}. Producto vendido y despachado por TechStore con garantía del vendedor.`,
+  description: item.description || `${item.name}. Producto vendido y despachado por ${item.seller?.name ?? 'TechStore'} con garantía del vendedor.`,
   features: [],
   questions: [],
   reviews: [],
@@ -113,7 +114,14 @@ const registry = new Map(
   ].map((p) => [p.id, p]),
 );
 
-export const getProductById = (id) => registry.get(id) ?? null;
+// Catálogo vigente: el de ejemplo + lo creado por el administrador, con sus cambios (ver utils/catalogAdmin)
+const allProducts = () => [...registry.values(), ...createdOf('producto').map(buildSimpleProduct)].map((p) => applyOverride(`p:${p.id}`, p));
+const publicProducts = () => allProducts().filter((p) => isPublic(`p:${p.id}`));
+
+/** Todos los productos, incluso suspendidos o dados de baja (panel de administración). */
+export const getAdminProducts = () => allProducts();
+
+export const getProductById = (id) => publicProducts().find((p) => p.id === id) ?? null;
 
 /** Promedio y cantidad de reseñas: usa la lista de reseñas si existe, si no los valores del producto. */
 export const getRatingInfo = (product) => {
@@ -127,7 +135,7 @@ export const getRatingInfo = (product) => {
 /** Productos relacionados, ya con `rating` y `reviewCount` calculados para la tarjeta. */
 export const getRelatedProducts = (product) =>
   (product.relatedIds ?? [])
-    .map((id) => registry.get(id))
+    .map((id) => getProductById(id))
     .filter(Boolean)
     .map((p) => {
       const { rating, count } = getRatingInfo(p);
@@ -160,8 +168,8 @@ const toCardItem = (p) => {
 /** Productos de una categoría (con sus subcategorías) listos para ItemCard. */
 export const getProductsByCategory = (categoryId) => {
   const ids = new Set(getCategoryScopeIds(categoryId));
-  return [...registry.values()].filter((p) => ids.has(p.categoryId)).map(toCardItem);
+  return publicProducts().filter((p) => ids.has(p.categoryId)).map(toCardItem);
 };
 
 /** Todos los productos como tarjetas (para el buscador). */
-export const getAllProductItems = () => [...registry.values()].map(toCardItem);
+export const getAllProductItems = () => publicProducts().map(toCardItem);

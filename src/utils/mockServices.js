@@ -1,6 +1,7 @@
 // Servicios de ejemplo agrupados por categoría (pestaña "Servicios" del listado).
 import { featuredServices } from './mockCatalog';
 import { getCategoryScopeIds } from './mockCategories';
+import { applyOverride, createdOf, isPublic } from './catalogAdmin';
 
 const categoryByServiceId = {
   s1: 'serv-otros',
@@ -19,16 +20,30 @@ const extra = [
   { id: 's11', name: 'Banquetería para Eventos', rating: 4.8, price: 150000, categoryId: 'serv-servicio-de-banqueteria-reposteria-y-alimentacion-en-general' },
 ].map((s) => ({ image: null, ...s }));
 
+// Proveedor de cada servicio de ejemplo
+const sellerByServiceId = {
+  s1: 'Bienestar Activo', s2: 'ElectroFix Chile', s3: 'Estudio Creativo', s4: 'CleanPro SpA', s5: 'VerdeVivo SpA', s6: 'Cuidado Feliz',
+  s7: 'Lex Asesorías', s8: 'Profe en Casa', s9: 'KineSalud', s10: 'Taller Mecánico Central', s11: 'Banquetería Doña Rosa',
+};
+const sellerOf = (id) => ({ id: (sellerByServiceId[id] ?? 'servicios').toLowerCase().replace(/[^a-z0-9]+/g, '-'), name: sellerByServiceId[id] ?? 'Proveedor de servicios' });
+
 const services = [
   ...featuredServices.map((s) => ({ ...s, categoryId: categoryByServiceId[s.id] ?? 'serv-otros' })),
   ...extra,
-];
+].map((s) => ({ ...s, seller: sellerOf(s.id) }));
+
+// Catálogo vigente: el de ejemplo + lo creado por el administrador, con sus cambios (ver utils/catalogAdmin)
+const allServices = () => [...services, ...createdOf('servicio').map((s) => ({ image: null, rating: 0, ...s }))].map((s) => applyOverride(`s:${s.id}`, s));
+const publicServices = () => allServices().filter((s) => isPublic(`s:${s.id}`));
+
+/** Todos los servicios, incluso suspendidos o dados de baja (panel de administración). */
+export const getAdminServices = () => allServices();
 
 /** Servicios de una categoría (incluye sus subcategorías si es una categoría padre). */
 export const getServicesByCategory = (categoryId) => {
   const ids = new Set(getCategoryScopeIds(categoryId));
-  return services.filter((s) => ids.has(s.categoryId)).map((s) => ({ ...s, kind: 'servicio' }));
+  return publicServices().filter((s) => ids.has(s.categoryId)).map((s) => ({ ...s, kind: 'servicio' }));
 };
 
 /** Todos los servicios como tarjetas (para el buscador). */
-export const getAllServiceItems = () => services.map((s) => ({ ...s, kind: 'servicio', reviewCount: 0, keywords: '' }));
+export const getAllServiceItems = () => publicServices().map((s) => ({ ...s, kind: 'servicio', reviewCount: 0, keywords: '' }));

@@ -65,7 +65,20 @@ const withIds = (entries, parentId = 'serv') =>
 
 export const serviceCategories = withIds(serviceNames);
 
-export const categoryTrees = { productos: productCategories, servicios: serviceCategories };
+const DEFAULT_TREES = { productos: productCategories, servicios: serviceCategories };
+const STORAGE_KEY = 'todomart.categories';
+
+// Árbol vigente: el administrador lo edita en /admin/categorias (se guarda en el navegador hasta que exista el backend).
+const isTree = (nodes) => Array.isArray(nodes) && nodes.every((n) => n && typeof n.id === 'string' && typeof n.name === 'string' && (n.children === undefined || isTree(n.children)));
+const loadTrees = () => {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY));
+    if (saved && isTree(saved.productos) && isTree(saved.servicios)) return saved;
+  } catch { /* sin almacenamiento o datos dañados: se usa el árbol del enunciado */ }
+  return DEFAULT_TREES;
+};
+
+export let categoryTrees = loadTrees();
 
 const index = new Map();
 const walk = (nodes, type, path = []) =>
@@ -74,7 +87,25 @@ const walk = (nodes, type, path = []) =>
     index.set(category.id, { category, path: nodePath, type });
     if (category.children) walk(category.children, type, nodePath);
   });
-Object.entries(categoryTrees).forEach(([type, nodes]) => walk(nodes, type));
+const rebuildIndex = () => {
+  index.clear();
+  Object.entries(categoryTrees).forEach(([type, nodes]) => walk(nodes, type));
+};
+rebuildIndex();
+
+const listeners = new Set();
+/** Para useSyncExternalStore (ver contexts/CategoriesContext). */
+export const subscribeCategories = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+export const getCategoryTrees = () => categoryTrees;
+export const getDefaultCategoryTrees = () => DEFAULT_TREES;
+
+/** Reemplaza el árbol completo ({ productos, servicios }), lo guarda y avisa a las vistas suscritas. */
+export function setCategoryTrees(next) {
+  categoryTrees = next;
+  rebuildIndex();
+  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* sin almacenamiento */ }
+  listeners.forEach((fn) => fn());
+}
 
 export const getCategory = (id) => index.get(id)?.category ?? null;
 

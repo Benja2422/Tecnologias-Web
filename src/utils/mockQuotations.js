@@ -78,5 +78,8 @@ export const initialQuotations = [
   quote(110, 40, sellers.oficina, [['Escritorio regulable', '140 cm', 1, 249990]], 'Solicitada'),
   quote(109, 41, sellers.tecnomarket, [['Router Wi-Fi 6', 'Doble banda', 3, 69990]], 'Respondida'),
   quote(108, 43, sellers.papel, [['Tóner láser', 'Negro', 2, 54990]], 'Aceptada'),
+  // Ya cumplieron 45 días: el cliente no las ve y la limpieza automática las elimina
+  quote(105, 47, sellers.hogar, [['Velador de madera', 'Natural', 2, 45990]], 'Solicitada'),
+  quote(104, 52, sellers.techstore, [['Webcam Full HD', 'Negra', 4, 34990]], 'Respondida'),
   quote(107, 44, sellers.hogar, [['Velador', 'Blanco', 2, 34990]], 'Solicitada'),
 ];

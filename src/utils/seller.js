@@ -1,5 +1,6 @@
 // Reglas y formatos del panel de emprendedor. Los precios incluyen IVA.
 import { regions } from './chileDivisions';
+import { getCategoryPath, getCategoryType } from './mockCategories';
 
 /** Tienda con la que está trabajando el emprendedor (TODO: tomarla de la sesión en src/contexts). El nombre visible sale del perfil. */
 export const SELLER = { id: 'comercial-spa', name: 'Comercial SpA', plan: 'Socio Pro', initials: 'CS' };
@@ -25,21 +26,13 @@ export const AGE_RESTRICTIONS = [
 ];
 export const ageLabel = (age) => (age ? `+${age}` : 'Todo público');
 
-export const PRODUCT_CATEGORIES = [
-  { id: 'herramientas', name: 'Herramientas' },
-  { id: 'iluminacion', name: 'Iluminación' },
-  { id: 'construccion', name: 'Construcción' },
-  { id: 'electricidad', name: 'Electricidad' },
-  { id: 'embalaje', name: 'Embalaje' },
-];
-
-export const SERVICE_CATEGORIES = [
-  { id: 'instalaciones', name: 'Instalaciones eléctricas' },
-  { id: 'climatizacion', name: 'Climatización' },
-  { id: 'mantencion', name: 'Mantención y reparación' },
-  { id: 'asesorias', name: 'Asesorías técnicas' },
-  { id: 'capacitacion', name: 'Capacitación' },
-];
+// Categorías: los ítems guardan el id de una categoría del árbol que administra la plataforma (utils/mockCategories).
+/** Categorías propias que usaba el panel antes de conectarse al árbol de la plataforma → categoría equivalente. */
+export const LEGACY_CATEGORY = {
+  herramientas: 'otros', iluminacion: 'hogar', construccion: 'hogar', electricidad: 'electronica-y-television', embalaje: 'utiles-y-libreria',
+  instalaciones: 'serv-servicios-domesticos-limpieza-de-combustion-y-reparaciones-menores', climatizacion: 'serv-servicios-profesionales-otros',
+  mantencion: 'serv-otros', asesorias: 'serv-servicios-profesionales-otros', capacitacion: 'serv-servicios-profesionales-servicios-educativos-otros',
+};
 
 export const SERVICE_MODALITIES = [
   { id: 'domicilio', name: 'A domicilio (Ubicación del cliente)' },
@@ -47,11 +40,22 @@ export const SERVICE_MODALITIES = [
   { id: 'remoto', name: 'Remoto (en línea)' },
 ];
 
-/** Nombre corto de la categoría para las tablas ("Servicios" agrupa a todas las de servicios). */
+/** Árbol al que debe pertenecer la categoría de un ítem. */
+export const categoryTypeOf = (item) => (item.kind === 'servicio' ? 'servicios' : 'productos');
+
+/** ¿La categoría del ítem existe y es del árbol correcto? (el administrador pudo eliminarla o moverla). */
+export const hasValidCategory = (item) => Boolean(item.category) && getCategoryType(item.category) === categoryTypeOf(item);
+
+/** Nombre de la categoría para las tablas: la subcategoría elegida (o "Sin categoría" si ya no existe). */
 export function categoryLabel(item) {
-  if (item.kind === 'servicio') return 'Servicios';
-  return PRODUCT_CATEGORIES.find((c) => c.id === item.category)?.name ?? '—';
+  return hasValidCategory(item) ? getCategoryPath(item.category).at(-1).name : 'Sin categoría';
 }
+
+/** Ruta completa: "Tecnología › Computación". */
+export const categoryPathLabel = (item) => (hasValidCategory(item) ? getCategoryPath(item.category).map((c) => c.name).join(' › ') : 'Sin categoría');
+
+/** Id de la categoría principal del ítem (para filtrar por categoría padre). */
+export const categoryRootId = (item) => (hasValidCategory(item) ? getCategoryPath(item.category)[0].id : null);
 
 // ---------- Catálogo e inventario ----------
 
@@ -61,6 +65,7 @@ export const itemStock = (item) =>
 
 /** Estado visible: Borrador (no publicado), Inactivo (producto sin stock: no se muestra en la tienda) o Activo. */
 export function itemStatus(item) {
+  if (item.suspended) return 'Suspendido';
   if (item.draft) return 'Borrador';
   if (item.kind === 'producto' && itemStock(item) === 0) return 'Inactivo';
   return 'Activo';
@@ -113,9 +118,9 @@ export const ORDER_STATUSES = ['Recibido', 'En preparación', 'Enviado', 'Entreg
 /** Nombres anteriores, para convertir datos guardados en el navegador. */
 export const LEGACY_ORDER_STATUS = { Confirmado: 'Recibido', Preparando: 'En preparación' };
 /** Color de la etiqueta de cada estado de pedido. */
-export const ORDER_TONE = { Recibido: 'blue', 'En preparación': 'orange', Enviado: 'red', Entregado: 'green' };
+export const ORDER_TONE = { Recibido: 'blue', 'En preparación': 'orange', Enviado: 'red', Entregado: 'green', Anulado: 'grey' };
 /** Pendientes de despacho: aún no salen de la tienda. */
-export const isPendingDispatch = (o) => o.status === 'Recibido' || o.status === 'En preparación';
+export const isPendingDispatch = (o) => !o.cancelled && (o.status === 'Recibido' || o.status === 'En preparación');
 /** Un pedido requiere despacho si tiene algún producto físico. */
 export const needsShipping = (o) => o.items.some((i) => i.kind !== 'servicio');
 

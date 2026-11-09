@@ -14,17 +14,19 @@ import PaginationBar from '../components/molecules/PaginationBar';
 import ConfirmDialog from '../components/molecules/ConfirmDialog';
 import OfferDialog from '../components/organisms/OfferDialog';
 import { useSeller } from '../contexts/SellerContext';
-import { PRODUCT_CATEGORIES, categoryLabel, formatDay, hoursLeft, norm, offerStatus, paginate } from '../utils/seller';
+import { useCategories } from '../contexts/CategoriesContext';
+import { categoryLabel, categoryPathLabel, categoryRootId, hasValidCategory, formatDay, hoursLeft, norm, offerStatus, paginate } from '../utils/seller';
 import { formatPrice } from '../utils/format';
 import { btnPrimary, btnSmall } from '../utils/sellerStyles';
 import { colors } from '../utils/theme';
 
 const PAGE_SIZE = 10;
-const FILTERS = [{ id: 'producto', name: 'Productos' }, { id: 'servicio', name: 'Servicios' }, ...PRODUCT_CATEGORIES];
 
 /** Ofertas vigentes y programadas del catálogo, con creación, edición y término anticipado. */
 export default function SellerOffersPage() {
   const { items, saveOffer, endOffer } = useSeller();
+  const { trees } = useCategories();
+  const FILTERS = [{ id: 'producto', name: 'Productos' }, { id: 'servicio', name: 'Servicios' }, ...trees.productos.map((c) => ({ id: c.id, name: c.name }))];
   const [query, setQuery] = useState('');
   const [type, setType] = useState(null);
   const [page, setPage] = useState(1);
@@ -41,7 +43,7 @@ export default function SellerOffersPage() {
 
   const q = norm(query.trim());
   const filtered = offers.filter((it) =>
-    (!type || it.kind === type || (it.kind === 'producto' && it.category === type)) && (!q || norm(it.name).includes(q) || norm(it.sku).includes(q)));
+    (!type || it.kind === type || (it.kind === 'producto' && categoryRootId(it) === type)) && (!q || norm(it.name).includes(q) || norm(it.sku).includes(q)));
   const view = paginate(filtered, page, PAGE_SIZE);
   const candidates = items.filter((it) => !it.draft && (!it.offer || offerStatus(it.offer, now) === 'Finalizada'));
 
@@ -75,7 +77,7 @@ export default function SellerOffersPage() {
         </>
       ),
     },
-    { key: 'cat', header: 'Categoría', width: 'minmax(110px, 1fr)', render: (it) => <Box component="span" sx={{ display: 'inline-block', px: 1, py: 0.4, border: '1px solid #E5E7EB', borderRadius: '4px', fontSize: 13, color: '#4B5563', bgcolor: '#FAFAFA' }}>{categoryLabel(it)}</Box> },
+    { key: 'cat', header: 'Categoría', width: 'minmax(110px, 1fr)', render: (it) => <Box component="span" title={categoryPathLabel(it)} sx={{ display: 'inline-block', px: 1, py: 0.4, border: `1px solid ${hasValidCategory(it) ? '#E5E7EB' : '#FBCFD6'}`, borderRadius: '4px', fontSize: 13, color: hasValidCategory(it) ? '#4B5563' : '#C00000', bgcolor: hasValidCategory(it) ? '#FAFAFA' : '#FDECEF' }}>{categoryLabel(it)}</Box> },
     {
       key: 'price', header: 'P. normal / Oferta', width: 'minmax(110px, 1fr)', render: (it) => (
         <>

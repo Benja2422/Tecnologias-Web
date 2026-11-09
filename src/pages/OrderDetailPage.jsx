@@ -89,7 +89,7 @@ export default function OrderDetailPage() {
       <Box component="section" aria-labelledby="seguimiento" sx={{ ...card, mt: 4 }}>
         <Typography id="seguimiento" component="h2" sx={{ ...h2, mb: 2 }}>Seguimiento del pedido</Typography>
         {cancelled ? (
-          <Alert severity="error">Este pedido fue cancelado.</Alert>
+          <Alert severity="error">Este pedido fue cancelado{order.cancelled ? ` por la administración (${order.cancelled.reason})` : ''}.</Alert>
         ) : (
           <Box sx={{ overflowX: 'auto' }}><Box sx={{ minWidth: 520 }}><OrderTimeline timeline={order.timeline} /></Box></Box>
         )}

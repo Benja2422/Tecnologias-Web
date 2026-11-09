@@ -9,6 +9,7 @@ import SellerTable from '../components/organisms/SellerTable';
 import ItemThumb from '../components/atoms/ItemThumb';
 import PaginationBar from '../components/molecules/PaginationBar';
 import OrderStatusSelect from '../components/molecules/OrderStatusSelect';
+import SellerChip from '../components/atoms/SellerChip';
 import OrderShippingDialog from '../components/organisms/OrderShippingDialog';
 import ShippingRatesDialog from '../components/organisms/ShippingRatesDialog';
 import { useSeller } from '../contexts/SellerContext';
@@ -34,7 +35,7 @@ export default function SellerOrdersPage() {
   const sorted = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const month = orders.filter((o) => sameMonth(o.createdAt, now)).length;
   const pending = orders.filter(isPendingDispatch).length;
-  const delivered = orders.filter((o) => o.status === 'Entregado').length;
+  const delivered = orders.filter((o) => !o.cancelled && o.status === 'Entregado').length;
 
   const q = norm(query.trim());
   const filtered = sorted.filter((o) => (!status || o.status === status) && (!q || norm(`${o.id} ${o.buyer.name} ${o.items.map((i) => i.name).join(' ')}`).includes(q)));
@@ -89,7 +90,9 @@ export default function SellerOrdersPage() {
       ),
     },
     { key: 'total', header: 'Total', width: 'minmax(100px, 0.8fr)', align: 'right', render: (o) => <Typography sx={{ fontSize: 15, fontWeight: 700, color: colors.ink }}>{formatPrice(orderSubtotal(o))}</Typography> },
-    { key: 'status', header: 'Estado (selector)', width: '150px', render: (o) => <OrderStatusSelect value={o.status} onChange={(v) => changeStatus(o, v)} label={`Estado del pedido ${o.id}`} /> },
+    { key: 'status', header: 'Estado (selector)', width: '150px', render: (o) => (o.cancelled
+      ? <Box title={`Anulado por la administración: ${o.cancelled.reason}`}><SellerChip label="Anulado" tone="grey" dot /><Typography sx={{ mt: 0.5, fontSize: 11.5, color: '#6B7280' }}>{o.cancelled.reason}</Typography></Box>
+      : <OrderStatusSelect value={o.status} onChange={(v) => changeStatus(o, v)} label={`Estado del pedido ${o.id}`} />) },
     {
       key: 'action', header: 'Acción rápida', width: 'minmax(220px, 1fr)', render: (o) => (
         <Box>

@@ -8,6 +8,7 @@ import SellerRequestCard from '../components/organisms/SellerRequestCard';
 import ItemThumb from '../components/atoms/ItemThumb';
 import PaginationBar from '../components/molecules/PaginationBar';
 import { useSeller } from '../contexts/SellerContext';
+import { useModeration } from '../contexts/ModerationContext';
 import { norm, paginate, timeAgo } from '../utils/seller';
 import { card } from '../utils/sellerStyles';
 import { colors } from '../utils/theme';
@@ -18,7 +19,9 @@ const FILTERS = [{ id: 'Pendiente', name: 'Pendientes' }, { id: 'Respondida', na
 
 /** Preguntas públicas de los compradores sobre los productos de la tienda, con respuesta pública. */
 export default function SellerQuestionsPage() {
-  const { questions, items, answerQuestion } = useSeller();
+  const { questions: allQuestions, items, answerQuestion } = useSeller();
+  const { isVisible, reminders } = useModeration();
+  const questions = allQuestions.filter((q) => isVisible(`q:${q.id}`)); // las ocultadas por moderación no se muestran
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState(null);
   const [page, setPage] = useState(1);
@@ -69,7 +72,7 @@ export default function SellerQuestionsPage() {
         {view.rows.map((q) => (
           <SellerRequestCard
             key={q.id}
-            header={{ id: q.id, name: q.buyer.name, type: q.buyer.type, status: statusOf(q), tone: q.answer ? 'green' : 'yellow', flag: isOverdue(q) ? `Más de ${OVERDUE_HOURS} h sin respuesta` : null }}
+            header={{ id: q.id, name: q.buyer.name, type: q.buyer.type, status: statusOf(q), tone: q.answer ? 'green' : 'yellow', flag: isOverdue(q) ? `Más de ${OVERDUE_HOURS} h sin respuesta${!q.answer && reminders[`q:${q.id}`] ? ' · Recordatorio de la administración' : ''}` : !q.answer && reminders[`q:${q.id}`] ? 'Recordatorio de la administración' : null }}
             form={q.answer ? null : {
               label: 'Responder públicamente en TodoMart:',
               placeholder: 'Escribe tu respuesta clara, técnica y profesional aquí...',

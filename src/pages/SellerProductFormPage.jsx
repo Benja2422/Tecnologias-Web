@@ -9,12 +9,13 @@ import SellerLayout from '../components/templates/SellerLayout';
 import Breadcrumb from '../components/molecules/Breadcrumb';
 import TextInput from '../components/atoms/TextInput';
 import SelectInput from '../components/atoms/SelectInput';
+import CategorySelect from '../components/molecules/CategorySelect';
 import ItemThumb from '../components/atoms/ItemThumb';
 import ImageDropzone from '../components/molecules/ImageDropzone';
 import OfferFields from '../components/molecules/OfferFields';
 import VariantDialog from '../components/organisms/VariantDialog';
 import { useSeller } from '../contexts/SellerContext';
-import { CRITICAL_STOCK, PRODUCT_CATEGORIES, norm, parseAmount, toLocalInput } from '../utils/seller';
+import { CRITICAL_STOCK, hasValidCategory, norm, parseAmount, toLocalInput } from '../utils/seller';
 import { formatPrice, formatThousands } from '../utils/format';
 import { btnOutlined, btnOutlinedRed, btnPrimary, iconBtn } from '../utils/sellerStyles';
 import { colors } from '../utils/theme';
@@ -89,6 +90,7 @@ export default function SellerProductFormPage() {
     if (!form.name.trim()) e.name = 'Ingresa el nombre del producto.';
     if (publish) {
       if (!form.category) e.category = 'Elige una categoría.';
+      else if (!hasValidCategory({ kind: 'producto', category: form.category })) e.category = 'Esa categoría ya no existe. Elige otra.';
       if (!/^[A-Z0-9][A-Z0-9-]{2,29}$/.test(sku)) e.sku = 'Usa letras, números y guiones (3 a 30).';
       else if (otherSkus.includes(sku)) e.sku = 'Ese SKU ya está en uso en tu catálogo.';
       if (form.images.length === 0) e.images = 'Agrega al menos una imagen.';
@@ -179,7 +181,7 @@ export default function SellerProductFormPage() {
             <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' } }}>
               <Box>
                 <Typography component="label" htmlFor="pf-category" sx={label}>Categoría{req}</Typography>
-                <SelectInput id="pf-category" options={PRODUCT_CATEGORIES} value={form.category} onChange={field('category')} placeholder="Selecciona una categoría" ariaLabel="Categoría" error={errors.category} />
+                <CategorySelect type="productos" id="pf-category" value={hasValidCategory({ kind: 'producto', category: form.category }) ? form.category : ''} onChange={field('category')} placeholder="Selecciona una categoría" ariaLabel="Categoría" error={errors.category} />
               </Box>
               <Box>
                 <Typography component="label" htmlFor="pf-sku" sx={label}>SKU Principal{req}</Typography>

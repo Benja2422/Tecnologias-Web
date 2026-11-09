@@ -31,8 +31,9 @@ export default function SellerDashboardPage() {
   const now = new Date();
   const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 15);
 
-  const salesNow = orders.filter((o) => sameMonth(o.createdAt, now)).reduce((s, o) => s + orderSubtotal(o), 0);
-  const salesPrev = orders.filter((o) => sameMonth(o.createdAt, prevMonth)).reduce((s, o) => s + orderSubtotal(o), 0);
+  const valid = orders.filter((o) => !o.cancelled); // los anulados por la administración no cuentan como venta
+  const salesNow = valid.filter((o) => sameMonth(o.createdAt, now)).reduce((s, o) => s + orderSubtotal(o), 0);
+  const salesPrev = valid.filter((o) => sameMonth(o.createdAt, prevMonth)).reduce((s, o) => s + orderSubtotal(o), 0);
   const pending = orders.filter(isPendingDispatch).length;
   const lowStock = new Set(inventoryRows(items).filter((r) => r.stock < r.minStock).map((r) => r.itemId)).size;
   const openQuotes = quotations.filter((q) => effectiveStatus(q, now) === 'Solicitada');

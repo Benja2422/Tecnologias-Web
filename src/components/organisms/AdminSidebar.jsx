@@ -1,7 +1,11 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
+import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SidebarNav from '../molecules/SidebarNav';
 import Wordmark from '../atoms/Wordmark';
@@ -11,7 +15,11 @@ import { colors } from '../../utils/theme';
 // Dashboard se agregará más adelante
 const ITEMS = [
   { label: 'Usuarios', to: '/admin/usuarios', icon: <PeopleOutlinedIcon /> },
-  { label: 'Categorías', to: '/admin/categorias', icon: <Inventory2OutlinedIcon /> },
+  { label: 'Productos y Servicios', to: '/admin/productos', icon: <Inventory2OutlinedIcon /> },
+  { label: 'Pedidos y Ventas', to: '/admin/pedidos', icon: <ReceiptLongOutlinedIcon /> },
+  { label: 'Cotizaciones', to: '/admin/cotizaciones', icon: <RequestQuoteOutlinedIcon /> },
+  { label: 'Categorías', to: '/admin/categorias', icon: <AccountTreeOutlinedIcon /> },
+  { label: 'Moderación', to: '/admin/moderacion', icon: <ShieldOutlinedIcon /> },
 ];
 
 export default function AdminSidebar() {

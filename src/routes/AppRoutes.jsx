@@ -1,4 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import AdminCategoriesPage from '../pages/AdminCategoriesPage';
+import AdminModerationPage from '../pages/AdminModerationPage';
+import AdminCatalogPage from '../pages/AdminCatalogPage';
+import AdminOrdersPage from '../pages/AdminOrdersPage';
+import AdminQuotationsPage from '../pages/AdminQuotationsPage';
+import AdminReceiptPage from '../pages/AdminReceiptPage';
+import AdminSalesReportPage from '../pages/AdminSalesReportPage';
+import { useCategories } from '../contexts/CategoriesContext';
 import CatalogPage from '../pages/CatalogPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
@@ -27,11 +35,18 @@ import NotFoundPage from '../pages/NotFoundPage';
 
 // TODO: proteger /perfil, /direcciones y /admin/* cuando exista la sesión en src/contexts
 // (las rutas /admin/* deben exigir además el rol de administrador, y /emprendedor/* el de emprendedor)
+/** /categorias lleva a la primera categoría de productos vigente (el administrador puede cambiar el árbol). */
+function FirstCategoryRedirect() {
+  const { trees } = useCategories();
+  const first = trees.productos[0] ?? trees.servicios[0];
+  return <Navigate to={first ? `/categorias/${first.id}` : '/'} replace />;
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<CatalogPage />} />
-      <Route path="/categorias" element={<Navigate to="/categorias/tecnologia" replace />} />
+      <Route path="/categorias" element={<FirstCategoryRedirect />} />
       <Route path="/categorias/:categoryId" element={<CategoryPage />} />
       <Route path="/carrito" element={<CartPage />} />
       <Route path="/checkout/despacho" element={<CheckoutShippingPage />} />
@@ -58,6 +73,13 @@ export default function AppRoutes() {
       <Route path="/emprendedor/*" element={<SellerRoutes />} />
       <Route path="/admin" element={<Navigate to="/admin/usuarios" replace />} />
       <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+      <Route path="/admin/productos" element={<AdminCatalogPage />} />
+      <Route path="/admin/pedidos" element={<AdminOrdersPage />} />
+      <Route path="/admin/cotizaciones" element={<AdminQuotationsPage />} />
+      <Route path="/admin/pedidos/historial" element={<AdminSalesReportPage />} />
+      <Route path="/admin/pedidos/:orderId/comprobante" element={<AdminReceiptPage />} />
+      <Route path="/admin/categorias" element={<AdminCategoriesPage />} />
+      <Route path="/admin/moderacion" element={<AdminModerationPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

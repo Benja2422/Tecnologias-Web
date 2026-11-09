@@ -3,6 +3,7 @@ import { Box, IconButton, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ContactAvatar from '../atoms/ContactAvatar';
 import MessageBubble from '../molecules/MessageBubble';
+import { useModeration } from '../../contexts/ModerationContext';
 import MessageComposer from '../molecules/MessageComposer';
 import { colors } from '../../utils/theme';
 import { dayKey, formatDayLabel } from '../../utils/messageDates';
@@ -13,6 +14,7 @@ import { dayKey, formatDayLabel } from '../../utils/messageDates';
  */
 export default function ChatPanel({ conversation, onBack, onSend }) {
   const endRef = useRef(null);
+  const { isHidden, isDeleted } = useModeration();
   const { name, initials, role, messages } = conversation;
 
   // Al abrir o recibir/enviar un mensaje, se baja hasta el último
@@ -36,12 +38,12 @@ export default function ChatPanel({ conversation, onBack, onSend }) {
         tabIndex={0}
         sx={{ flex: 1, minHeight: 0, overflowY: 'auto', px: { xs: 2, md: 4 }, py: 3, display: 'grid', alignContent: 'start', gap: 2, bgcolor: '#FCFCFC' }}
       >
-        {messages.map((m, i) => (
+        {messages.filter((m) => !isDeleted(`m:${m.id}`)).map((m, i, list) => (
           <Fragment key={m.id}>
-            {(i === 0 || dayKey(messages[i - 1].at) !== dayKey(m.at)) && (
+            {(i === 0 || dayKey(list[i - 1].at) !== dayKey(m.at)) && (
               <Typography sx={{ textAlign: 'center', fontSize: 12, color: '#8A8A8A', py: 0.5 }}>{formatDayLabel(m.at)}</Typography>
             )}
-            <MessageBubble message={m} />
+            <MessageBubble message={m} moderated={isHidden(`m:${m.id}`)} />
           </Fragment>
         ))}
         <div ref={endRef} />

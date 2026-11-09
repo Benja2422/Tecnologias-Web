@@ -8,6 +8,7 @@ import SellerChip from '../components/atoms/SellerChip';
 import RatingStars from '../components/atoms/RatingStars';
 import PaginationBar from '../components/molecules/PaginationBar';
 import { useSeller } from '../contexts/SellerContext';
+import { useModeration } from '../contexts/ModerationContext';
 import { formatDay, norm, paginate } from '../utils/seller';
 import { card } from '../utils/sellerStyles';
 import { colors } from '../utils/theme';
@@ -24,7 +25,9 @@ const fmt = (n) => n.toLocaleString('es-CL', { minimumFractionDigits: 1, maximum
 
 /** Calificaciones y reseñas que los clientes dejaron a la tienda y a sus productos o servicios (solo lectura). */
 export default function SellerReviewsPage() {
-  const { reviews } = useSeller();
+  const { reviews: allReviews } = useSeller();
+  const { isVisible } = useModeration();
+  const reviews = allReviews.filter((r) => isVisible(`r:${r.id}`)); // las ocultadas por moderación no cuentan
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(null);
   const [page, setPage] = useState(1);

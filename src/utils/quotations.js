@@ -31,14 +31,18 @@ const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', '
 /** 18 nov 2026 */
 export const formatDayMonthYear = (d) => { const x = new Date(d); return `${x.getDate()} ${MONTHS[x.getMonth()]} ${x.getFullYear()}`; };
 
+/** Inicio del ciclo: la solicitud o, si el administrador la renovó, la renovación. */
+export const cycleStart = (q) => q.renewedAt ?? q.createdAt;
 /** Último día en que se puede aceptar. */
-export const validUntil = (q) => addDays(q.createdAt, QUOTE_VALID_DAYS);
+export const validUntil = (q) => addDays(cycleStart(q), QUOTE_VALID_DAYS);
 /** Día en que se elimina. */
-export const deleteOn = (q) => addDays(q.createdAt, QUOTE_DELETE_DAYS);
+export const deleteOn = (q) => addDays(cycleStart(q), QUOTE_DELETE_DAYS);
+/** Días transcurridos del ciclo de 45 días. */
+export const cycleDay = (q, now = new Date()) => diffDays(now, cycleStart(q));
 /** Días que faltan para el vencimiento (0 = vence hoy). */
 export const daysLeft = (q, now = new Date()) => diffDays(validUntil(q), now);
 /** Una cotización ya eliminada (45 días) no se muestra. */
-export const isPurged = (q, now = new Date()) => diffDays(now, q.createdAt) >= QUOTE_DELETE_DAYS;
+export const isPurged = (q, now = new Date()) => diffDays(now, cycleStart(q)) >= QUOTE_DELETE_DAYS;
 
 /** Estado visible: una cotización Solicitada o Respondida pasa a Expirada cuando termina su vigencia. */
 export function effectiveStatus(q, now = new Date()) {

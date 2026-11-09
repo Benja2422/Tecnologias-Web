@@ -40,7 +40,7 @@ const service = (id, name, sku, category, price, extra = {}) => ({
 const offer = (price, startsAt, endsAt) => ({ price, startsAt, endsAt, endedAt: null });
 
 export const initialItems = [
-  product('p-her-091', 'Caja de Herramientas Premium Pro', 'HER-091', 'herramientas', 45990, 0, 5, {
+  product('p-her-091', 'Caja de Herramientas Premium Pro', 'HER-091', 'otros', 45990, 0, 5, {
     description: 'Caja metálica de 3 niveles con bandejas desmontables, cierre con candado y asa reforzada. Incluye garantía de 12 meses.',
     variants: [
       { sku: 'HER-091-PRO-S', attributes: 'Talla S / Rojo', price: 45990, stock: 8, minStock: CRITICAL_STOCK },
@@ -49,35 +49,35 @@ export const initialItems = [
     related: ['p-amp-102', 'p-esc-502'],
     offer: offer(34990, ago(4 * DAY), ahead(8 * HOUR)),
   }),
-  product('p-amp-102', 'Pack 10 Ampolletas LED Inteligentes', 'AMP-102', 'iluminacion', 18500, 4, 4, {
+  product('p-amp-102', 'Pack 10 Ampolletas LED Inteligentes', 'AMP-102', 'hogar', 18500, 4, 4, {
     description: 'Ampolletas LED E27 de 9 W con control por aplicación y luz cálida o fría.',
     offer: offer(14990, ahead(3 * DAY), ahead(17 * DAY)),
   }),
-  product('p-tal-042', 'Taladro Percutor Inalámbrico 18V', 'TAL-042', 'herramientas', 89990, 2, 5, {
+  product('p-tal-042', 'Taladro Percutor Inalámbrico 18V', 'TAL-042', 'otros', 89990, 2, 5, {
     description: 'Taladro percutor de 18 V con 2 baterías de litio, cargador rápido y maletín.',
     images: [{ name: 'taladro.png', src: taladro }],
     offer: offer(69990, ago(8 * DAY), ahead(22 * DAY)),
   }),
-  product('p-sie-012', 'Sierra Circular de Mano 1200W', 'SIE-CIRC-12', 'herramientas', 74990, 1, 3),
-  product('p-esc-502', 'Escalera de Aluminio Tijera 5 Peldaños', 'ESC-502', 'construccion', 32400, 8, 5, {
+  product('p-sie-012', 'Sierra Circular de Mano 1200W', 'SIE-CIRC-12', 'otros', 74990, 1, 3),
+  product('p-esc-502', 'Escalera de Aluminio Tijera 5 Peldaños', 'ESC-502', 'hogar', 32400, 8, 5, {
     offer: offer(24990, ago(2 * DAY), ahead(12 * DAY)),
   }),
-  product('p-foc-150', 'Foco LED Industrial 150W High Bay', 'FOC-150', 'iluminacion', 39990, 22, 10),
-  product('p-rot-020', 'Rotomartillo Inalámbrico de Torque 20V', 'ROT-020', 'herramientas', 129990, 6, 4),
-  product('p-cin-048', 'Cinta de Embalaje Industrial 48mm x 100m', 'CIN-048', 'embalaje', 2490, 300, 50),
-  product('p-gat-003', 'Gato Hidráulico 3 Ton', 'GAT-003', 'herramientas', 54990, 0, 3),
-  product('p-bro-010', 'Set de Brocas Escalonadas 10 piezas', 'BRO-010', 'herramientas', 9840, 18, 6),
-  product('p-gen-001', 'Generador Eléctrico Monofásico de Inducción', 'GEN-001', 'electricidad', 459990, 3, 2),
-  product('p-lla-012', 'Llave de Torque 1/2"', 'LLA-012', 'herramientas', 42990, 9, 3),
-  service('s-ser-e01', 'Servicio de Instalación Eléctrica Domiciliaria', 'SER-E01', 'instalaciones', 65000, {
+  product('p-foc-150', 'Foco LED Industrial 150W High Bay', 'FOC-150', 'hogar', 39990, 22, 10),
+  product('p-rot-020', 'Rotomartillo Inalámbrico de Torque 20V', 'ROT-020', 'otros', 129990, 6, 4),
+  product('p-cin-048', 'Cinta de Embalaje Industrial 48mm x 100m', 'CIN-048', 'utiles-y-libreria', 2490, 300, 50),
+  product('p-gat-003', 'Gato Hidráulico 3 Ton', 'GAT-003', 'accesorios-para-vehiculos', 54990, 0, 3),
+  product('p-bro-010', 'Set de Brocas Escalonadas 10 piezas', 'BRO-010', 'otros', 9840, 18, 6),
+  product('p-gen-001', 'Generador Eléctrico Monofásico de Inducción', 'GEN-001', 'electronica-y-television', 459990, 3, 2),
+  product('p-lla-012', 'Llave de Torque 1/2"', 'LLA-012', 'accesorios-para-vehiculos', 42990, 9, 3),
+  service('s-ser-e01', 'Servicio de Instalación Eléctrica Domiciliaria', 'SER-E01', 'serv-servicios-domesticos-limpieza-de-combustion-y-reparaciones-menores', 65000, {
     duration: 'Media jornada', ageRestriction: 18, description: 'Instalación de enchufes, luminarias y tableros con certificación SEC.',
     offer: offer(49900, ago(6 * DAY), ahead(25 * DAY)),
   }),
-  service('s-ser-c12', 'Asesoría Técnica de Climatización (por hora)', 'SER-C12', 'climatizacion', 25000, {
+  service('s-ser-c12', 'Asesoría Técnica de Climatización (por hora)', 'SER-C12', 'serv-servicios-profesionales-otros', 25000, {
     unit: 'Por hora', duration: '1 hora', modality: 'remoto',
     offer: offer(19990, ago(10 * DAY), ahead(50 * DAY)),
   }),
-  service('s-ser-m01', 'Mantenimiento Preventivo de Generadores', 'SER-M01', 'mantencion', 85000, { duration: '2 horas', ageRestriction: 18 }),
+  service('s-ser-m01', 'Mantenimiento Preventivo de Generadores', 'SER-M01', 'serv-otros', 85000, { duration: '2 horas', ageRestriction: 18 }),
 ];
 
 const line = (itemId, name, quantity, unitPrice, kind = 'producto') => ({ itemId, name, quantity, unitPrice, kind });

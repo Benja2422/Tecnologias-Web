@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from 'react';
 import { useCart } from './CartContext';
 import { useAddresses } from './AddressesContext';
 import { useQuotations } from './QuotationsContext';
@@ -7,6 +7,7 @@ import { calcTotals, getShippingMethod, needsShipping } from '../utils/cart';
 import { getPrincipalPhone, mockProfile } from '../utils/mockProfile';
 import { seedOrder } from '../utils/mockOrders';
 import { quotationToLines } from '../utils/quotations';
+import { applyOrderOverride, getOrdersAdminState, subscribeOrdersAdmin } from '../utils/ordersAdmin';
 
 const ORDERS_KEY = 'todomart.orders';
 const FIRST_ORDER_NUMBER = 848;
@@ -34,8 +35,12 @@ export function CheckoutProvider({ children }) {
   const { getQuotation, markPaid } = useQuotations();
   const [draft, setDraft] = useState(null); // { sellerId, quotationId, addressId, shippingId }
   const [placed, setPlaced] = useState(loadOrders); // pedidos hechos en esta app (el de ejemplo se suma aparte)
-  // Más reciente primero
-  const orders = useMemo(() => [...placed].reverse().concat(seedOrder), [placed]);
+  // Más reciente primero, con los cambios del administrador (estado, despacho, anulación)
+  const adminChanges = useSyncExternalStore(subscribeOrdersAdmin, getOrdersAdminState, getOrdersAdminState);
+  const orders = useMemo(
+    () => [...placed].reverse().concat(seedOrder).map((o) => applyOrderOverride(`c:${o.id}`, o)),
+    [placed, adminChanges], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const startDraft = useCallback((sellerId, quotationId = null) => {
     const principal = addresses.find((a) => a.isPrincipal) ?? addresses[0];

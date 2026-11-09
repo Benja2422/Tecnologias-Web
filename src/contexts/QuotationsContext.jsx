@@ -91,12 +91,26 @@ export function QuotationsProvider({ children }) {
     return true;
   }, [raw, update]);
 
+  // ---------- Administración ----------
+  /** Todas las cotizaciones guardadas, incluso las que ya cumplieron 45 días (aún sin eliminar). */
+  const allQuotations = useMemo(() => [...raw].sort((a, b) => b.createdAt.localeCompare(a.createdAt)), [raw]);
+  /** El administrador cambia datos de una cotización (estado, renovación…). */
+  const adminUpdate = useCallback((id, patch) => update(id, (q) => ({ ...q, ...patch, updatedAt: new Date().toISOString() })), [update]);
+  const adminDelete = useCallback((id) => setRaw((prev) => prev.filter((q) => q.id !== id)), []);
+  /** Elimina físicamente las que cumplieron 45 días. Devuelve cuántas eran. */
+  const purge = useCallback(() => {
+    const now = new Date();
+    const count = rawRef.current.filter((q) => isPurged(q, now)).length;
+    if (count) setRaw((prev) => prev.filter((q) => !isPurged(q, now)));
+    return count;
+  }, []);
+
   /** Al pagar una cotización aceptada queda ligada al pedido. */
   const markPaid = useCallback((id, orderId) => update(id, (q) => ({ ...q, orderId, updatedAt: new Date().toISOString() })), [update]);
 
   const value = useMemo(
-    () => ({ quotations, pendingDecisionCount, getQuotation, requestQuotation, acceptQuotation, rejectQuotation, respondQuotation, markPaid }),
-    [quotations, pendingDecisionCount, getQuotation, requestQuotation, acceptQuotation, rejectQuotation, respondQuotation, markPaid],
+    () => ({ quotations, pendingDecisionCount, getQuotation, requestQuotation, acceptQuotation, rejectQuotation, respondQuotation, markPaid, allQuotations, adminUpdate, adminDelete, purge }),
+    [quotations, pendingDecisionCount, getQuotation, requestQuotation, acceptQuotation, rejectQuotation, respondQuotation, markPaid, allQuotations, adminUpdate, adminDelete, purge],
   );
   return <QuotationsContext.Provider value={value}>{children}</QuotationsContext.Provider>;
 }
