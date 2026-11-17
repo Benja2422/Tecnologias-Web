@@ -6,7 +6,7 @@ Grupo 5 - Sección 2
 Integrantes:
 -Joaquín Barría
 -Sebastián Cadagán
--Benjamín Hernandez
+-Benjamín Hernandez 
 -Francisco Rivera
 -Mateo Villaroel
 -Sebastian Jaramillo
